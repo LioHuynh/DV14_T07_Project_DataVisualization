@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Road Crash Hospitalisations Dashboard | Australia 2011–2021</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <header class="dashboard-header">
+            <h1>🚑 Hospitalised injuries from road crashes</h1>
+            <p class="subhead">Australia · 2011–2021 · Source: BITRE / AIHW (processed with KNIME)</p>
+        </header>
+
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label>📅 YEAR</label>
+                <select id="year-filter"></select>
+            </div>
+            <div class="filter-group">
+                <label>🗺️ STATE / TERRITORY</label>
+                <select id="state-filter"></select>
+            </div>
+            <div class="filter-group">
+                <label>🚗 ROAD USER</label>
+                <div id="roaduser-checkboxes" class="checkbox-group"></div>
+            </div>
+            <div class="filter-group">
+                <label>📊 METRIC</label>
+                <select id="metric-filter">
+                    <option value="raw">Raw counts</option>
+                    <option value="rate">Rate per 100k (planned)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h2>🏙️ State comparison (<span id="year-display">2021</span>)</h2>
+                <div id="chart-bar" class="chart-container"></div>
+                <div class="chart-note">Hover for exact values | Bar chart</div>
+            </div>
+            <div class="chart-card">
+                <h2>📈 National & state trends over time</h2>
+                <div id="chart-line" class="chart-container"></div>
+                <div class="chart-note">Hover for values | Line chart (use state filter)</div>
+            </div>
+            <div class="chart-card">
+                <h2>🚗 Road user trends (Australia)</h2>
+                <div id="chart-multiline" class="chart-container"></div>
+                <div class="chart-note">Click legend to highlight | Multi‑line chart</div>
+            </div>
+            <div class="chart-card">
+                <h2>📊 Road user composition over time (Australia)</h2>
+                <div id="chart-stacked" class="chart-container"></div>
+                <div class="chart-note">Hover for exact counts | Stacked bar chart</div>
+            </div>
+        </div>
+
+        <footer class="dashboard-footer">
+            <p>Data limitations: n.p. values omitted; break‑in‑series in NSW (2017) and Victoria (2012) – annotated in final.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
