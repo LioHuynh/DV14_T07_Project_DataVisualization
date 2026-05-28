@@ -3,41 +3,30 @@ import streamlit.components.v1 as components
 import pandas as pd
 import json
 
-# 1. Page Config
+# 1. Set page to wide mode and hide the sidebar by default
 st.set_page_config(
     layout="wide", 
     page_title="Road Crash Data Cube", 
     initial_sidebar_state="collapsed"
 )
 
-# 2. Aggressive CSS to remove ALL margins, headers, and padding
+# 2. CSS to hide Streamlit's header, footer, and padding
 st.markdown("""
     <style>
         #root > div:nth-child(1) > div > div > div > div > section > div {
-            padding: 0px !important;
+            padding-top: 0rem;
+            padding-bottom: 0rem;
+            padding-left: 0rem;
+            padding-right: 0rem;
         }
-        .main .block-container {
-            padding: 0px !important;
-            max-width: 100% !important;
-        }
-        header {visibility: hidden !important; height: 0px !important;}
-        footer {visibility: hidden !important;}
-        #MainMenu {visibility: hidden !important;}
-        
-        /* This removes the blank space specifically at the top */
-        .stApp {
-            margin-top: -60px;
-        }
-        
-        /* Optional: Hide the anchor link icons on titles */
-        .element-container:has(#st-custom-html-spacer) {
-            display: none;
-        }
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        #MainMenu {visibility: hidden;}
     </style>
-    <div id="st-custom-html-spacer"></div>
 """, unsafe_allow_html=True)
 
 def get_html():
+    # Load assets
     with open('index.html', 'r', encoding='utf-8') as f:
         html = f.read()
     with open('style.css', 'r', encoding='utf-8') as f:
@@ -45,6 +34,7 @@ def get_html():
     with open('script.js', 'r', encoding='utf-8') as f:
         js = f.read()
     
+    # Load data
     df = pd.read_csv('mergedData.csv')
     data_json = df.to_json(orient='records')
 
@@ -57,6 +47,6 @@ def get_html():
     
     return html
 
-# 3. Render
-# Height should match the height of your .dashboard class in style.css
-components.html(get_html(), height=1100, scrolling=False)
+# 3. Render as a full-screen component
+# We use st.components.v1.html with height=1000 or a calculated vh
+components.html(get_html(), height=1200, scrolling=False)
