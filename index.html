@@ -1,69 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Road Crash Hospitalisations Dashboard | Australia 2011–2021</title>
+    <title>Road Crash Hospitalisations Cube | Australia 2011–2021</title>
+    <link rel="icon" href="data:,">
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
+
 <body>
     <div class="dashboard">
         <header class="dashboard-header">
-            <h1>🚑 Hospitalised injuries from road crashes</h1>
-            <p class="subhead">Australia · 2011–2021 · Source: BITRE / AIHW (processed with KNIME)</p>
+            <div class="hero-copy">
+                <span class="eyebrow">Holographic 3D data cube</span>
+                <h1>Hospitalised injuries from road crashes</h1>
+                <p class="subhead">Australia · 2011–2021 · Four perspectives on a rotating prism · Source: BITRE / AIHW
+                </p>
+            </div>
+            <div class="hero-panel">
+                <span class="hero-number" id="hero-year">2021</span>
+                <span class="hero-label">Selected year</span>
+            </div>
         </header>
 
-        <div class="filter-bar">
-            <div class="filter-group">
-                <label>📅 YEAR</label>
-                <select id="year-filter"></select>
-            </div>
-            <div class="filter-group">
-                <label>🗺️ STATE / TERRITORY</label>
-                <select id="state-filter"></select>
-            </div>
-            <div class="filter-group">
-                <label>🚗 ROAD USER</label>
-                <div id="roaduser-checkboxes" class="checkbox-group"></div>
-            </div>
-            <div class="filter-group">
-                <label>📊 METRIC</label>
-                <select id="metric-filter">
-                    <option value="raw">Raw counts</option>
-                    <option value="rate">Rate per 100k (planned)</option>
-                </select>
-            </div>
-        </div>
+        <section class="kpi-grid" aria-label="Dashboard summary">
+            <article class="kpi-card">
+                <span class="kpi-label">Total hospitalisations</span>
+                <strong id="kpi-total">—</strong>
+                <small id="kpi-total-note">Selected year</small>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label">Top state / territory</span>
+                <strong id="kpi-top-state">—</strong>
+                <small id="kpi-top-state-note">By raw count</small>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label">Selected trend</span>
+                <strong id="kpi-trend">—</strong>
+                <small id="kpi-trend-note">From first to latest year</small>
+            </article>
+            <article class="kpi-card accent-card">
+                <span class="kpi-label">Current focus</span>
+                <strong id="kpi-focus">Australia</strong>
+                <small>Click a map state to change focus</small>
+            </article>
+        </section>
 
-        <div class="charts-grid">
-            <div class="chart-card">
-                <h2>🏙️ State comparison (<span id="year-display">2021</span>)</h2>
-                <div id="chart-bar" class="chart-container"></div>
-                <div class="chart-note">Hover for exact values | Bar chart</div>
+
+
+        <!-- =====================  THE CUBE  ===================== -->
+        <main class="cube-stage">
+            <section class="filter-bar" aria-label="Dashboard filters">
+                <div class="filter-group">
+                    <label for="year-filter">Year</label>
+                    <select id="year-filter"></select>
+                </div>
+                <div class="filter-group">
+                    <label for="state-filter">State / Territory</label>
+                    <select id="state-filter"></select>
+                </div>
+                <div class="filter-group road-filter">
+                    <label>Road user</label>
+                    <div id="roaduser-checkboxes" class="checkbox-group"></div>
+                </div>
+                <div class="filter-group">
+                    <label for="metric-filter">Metric</label>
+                    <select id="metric-filter">
+                        <option value="raw">Raw counts</option>
+                        <option value="rate">Rate per 100k (planned)</option>
+                    </select>
+                </div>
+                <button id="reset-filters" class="reset-btn" type="button">Reset view</button>
+            </section>
+            <!-- Holographic projection chamber -->
+            <div class="cube-chamber">
+                <div class="chamber-grid"></div>
+                <div class="cube-viewport" id="cube-viewport" aria-label="3D data cube, drag left/right to rotate">
+                    <div class="cube-shadow"></div>
+                    <div class="cube-scene">
+                        <div class="cube" id="cube">
+
+                            <!-- FACE 1: FRONT — Stream graph -->
+                            <div class="cube-face face-front" data-face="front">
+                                <div class="face-header">
+                                    <span class="face-kicker">Flow</span>
+                                    <h3>Road user stream</h3>
+                                    <span class="face-pill">2011–2021</span>
+                                </div>
+                                <div class="face-chart" id="chart-stream"></div>
+                                <p class="face-note">Stream thickness = hospitalisations per road user, year over year.
+                                </p>
+                            </div>
+
+                            <!-- FACE 2: RIGHT — Parliament chart -->
+                            <div class="cube-face face-right" data-face="right">
+                                <div class="face-header">
+                                    <span class="face-kicker">Composition</span>
+                                    <h3>Parliament of road users <span class="face-year"
+                                            id="parliament-year">2021</span></h3>
+                                    <span class="face-pill">seats = share</span>
+                                </div>
+                                <div class="face-chart" id="chart-parliament"></div>
+                                <p class="face-note">Each seat is a slice of the selected year's hospitalisations.</p>
+                            </div>
+
+                            <!-- FACE 3: BACK — Waffle chart -->
+                            <div class="cube-face face-back" data-face="back">
+                                <div class="face-header">
+                                    <span class="face-kicker">Share</span>
+                                    <h3>Waffle share <span class="face-year" id="waffle-year">2021</span></h3>
+                                    <span class="face-pill">100 = 100%</span>
+                                </div>
+                                <div class="face-chart" id="chart-waffle"></div>
+                                <p class="face-note">Each square ≈ 1% of the year's road-user hospitalisations.</p>
+                            </div>
+
+                            <!-- FACE 4: LEFT — Choropleth map -->
+                            <div class="cube-face face-left" data-face="left">
+                                <div class="face-header">
+                                    <span class="face-kicker">Geography</span>
+                                    <h3>State choropleth <span class="face-year" id="choropleth-year">2021</span></h3>
+                                    <span class="face-pill">Click a state</span>
+                                </div>
+                                <div class="face-chart" id="chart-choropleth"></div>
+                                <p class="face-note">Darker states = more hospitalisations · Click to set focus.</p>
+                            </div>
+
+                            <!-- Decorative glass caps (no data) -->
+                            <div class="cube-face face-top cap" data-face="top" aria-hidden="true"></div>
+                            <div class="cube-face face-bottom cap" data-face="bottom" aria-hidden="true"></div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="chart-card">
-                <h2>📈 National & state trends over time</h2>
-                <div id="chart-line" class="chart-container"></div>
-                <div class="chart-note">Hover for values | Line chart (use state filter)</div>
-            </div>
-            <div class="chart-card">
-                <h2>🚗 Road user trends (Australia)</h2>
-                <div id="chart-multiline" class="chart-container"></div>
-                <div class="chart-note">Click legend to highlight | Multi‑line chart</div>
-            </div>
-            <div class="chart-card">
-                <h2>📊 Road user composition over time (Australia)</h2>
-                <div id="chart-stacked" class="chart-container"></div>
-                <div class="chart-note">Hover for exact counts | Stacked bar chart</div>
-            </div>
-        </div>
+
+            <!-- Right-side control panel -->
+            <aside class="cube-sidebar">
+                <div class="cube-hint">
+                    <span class="hint-dot"></span>
+                    <span>Drag left / right to spin. Auto-rotates when idle.</span>
+                </div>
+
+                <div class="cube-controls" role="tablist" aria-label="Snap to face">
+                    <button class="face-btn active" type="button" data-face="front" role="tab" aria-selected="true">
+                        <span class="btn-num">1</span><span class="btn-label">Stream</span>
+                    </button>
+                    <button class="face-btn" type="button" data-face="right" role="tab" aria-selected="false">
+                        <span class="btn-num">2</span><span class="btn-label">Parliament</span>
+                    </button>
+                    <button class="face-btn" type="button" data-face="back" role="tab" aria-selected="false">
+                        <span class="btn-num">3</span><span class="btn-label">Waffle</span>
+                    </button>
+                    <button class="face-btn" type="button" data-face="left" role="tab" aria-selected="false">
+                        <span class="btn-num">4</span><span class="btn-label">Choropleth</span>
+                    </button>
+                </div>
+
+                <button class="auto-toggle" type="button" id="auto-toggle" aria-pressed="true"
+                    title="Pause / resume auto-rotation">
+                    <span id="auto-toggle-label">⏸ Pause spin</span>
+                </button>
+
+                <div class="status-block">
+                    <span class="status-label">Now viewing</span>
+                    <span class="status-pill" id="active-face-label">Stream graph</span>
+                </div>
+            </aside>
+        </main>
 
         <footer class="dashboard-footer">
-            <p>Data limitations: n.p. values omitted; break‑in‑series in NSW (2017) and Victoria (2012) – annotated in final.</p>
+            <p>Data limitations: n.p. values omitted; break-in-series in NSW (2017) and Victoria (2012) should be
+                annotated in the final report.</p>
         </footer>
     </div>
 
     <script src="script.js"></script>
 </body>
+
 </html>
