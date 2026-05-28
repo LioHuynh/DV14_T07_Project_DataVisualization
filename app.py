@@ -49,4 +49,4 @@ def get_html():
 
 # 3. Render as a full-screen component
 # We use st.components.v1.html with height=1000 or a calculated vh
-components.html(get_html(), height=1200, scrolling=False)
+components.html(get_html(), height=1300, scrolling=False)
