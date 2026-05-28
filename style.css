@@ -523,7 +523,7 @@ svg { display: block; width: 100%; height: auto; }
     .filter-bar { margin-inline: 0.75rem; }
     .kpi-card, .filter-bar { border-radius: 20px; }
 
-    :root { --cube-size: min(42vh, 40vw, 540px*0.8); --cube-perspective: 1200px; }
+    :root { --cube-size: min(42vh, 40vw, 540px); --cube-perspective: 1200px; }
     .cube-stage { padding: 0.75rem; }
     .cube-chamber { padding: 1.3rem; }
     .cube-face { padding: 0.7rem 0.7rem 0.5rem; border-radius: 16px; }
