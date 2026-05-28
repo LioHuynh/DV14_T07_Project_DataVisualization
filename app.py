@@ -3,7 +3,27 @@ import streamlit.components.v1 as components
 import pandas as pd
 import json
 
-st.set_page_config(layout="wide", page_title="Road Crash Data Cube", initial_sidebar_state="collapsed")
+# 1. Set page to wide mode and hide the sidebar by default
+st.set_page_config(
+    layout="wide", 
+    page_title="Road Crash Data Cube", 
+    initial_sidebar_state="collapsed"
+)
+
+# 2. CSS to hide Streamlit's header, footer, and padding
+st.markdown("""
+    <style>
+        #root > div:nth-child(1) > div > div > div > div > section > div {
+            padding-top: 0rem;
+            padding-bottom: 0rem;
+            padding-left: 0rem;
+            padding-right: 0rem;
+        }
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        #MainMenu {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
 
 def get_html():
     # Load assets
@@ -14,25 +34,19 @@ def get_html():
     with open('script.js', 'r', encoding='utf-8') as f:
         js = f.read()
     
-    # Load data from CSV and convert to JSON for JS injection
+    # Load data
     df = pd.read_csv('mergedData.csv')
     data_json = df.to_json(orient='records')
 
-    # Inject CSS directly into HTML
+    # Inject CSS
     html = html.replace('<link rel="stylesheet" href="style.css">', f'<style>{css}</style>')
     
-    # Inject JS and replace the d3.csv() call with the local JSON data
-    # This ensures the browser doesn't have issues loading external files from inside an iframe
+    # Inject JS and Data
     js_with_data = js.replace('d3.csv("mergedData.csv")', f'Promise.resolve({data_json})')
     html = html.replace('<script src="script.js"></script>', f'<script>{js_with_data}</script>')
     
     return html
 
-# Main Streamlit UI
-st.title("Road Crash Hospitalisations Cube")
-st.markdown("Australia · 2011–2021 · Interactive 3D Visualization")
-
-# Render the application component
-components.html(get_html(), height=1000, scrolling=True)
-
-st.info("💡 Hint: Use your mouse to rotate the cube or click the buttons to switch perspectives.")
+# 3. Render as a full-screen component
+# We use st.components.v1.html with height=1000 or a calculated vh
+components.html(get_html(), height=1200, scrolling=False)
