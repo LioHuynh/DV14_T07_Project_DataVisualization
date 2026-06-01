@@ -20,8 +20,14 @@ st.markdown("""
             padding-right: 0rem;
         }
         header {visibility: hidden;}
-        footer {visibility: hidden;}
+        footer {visibility: visible;}
         #MainMenu {visibility: hidden;}
+        footer {
+            visibility: visible !important;
+            display: block !important;
+            position: relative; 
+            margin-top: 50px; /* Adds space above the footer */
+        }
     </style>
 """, unsafe_allow_html=True)
 
