@@ -201,7 +201,6 @@ function updateStaticLabels() {
     ["hero-year", "parliament-year", "waffle-year", "choropleth-year", "stream-year-pill"].forEach(id => {
         const el = document.getElementById(id); if (el) el.textContent = y;
     });
-    document.getElementById("kpi-focus").textContent = selectedState;
 }
 
 // ======================== DATA HELPERS ========================
@@ -329,6 +328,20 @@ function updateKpis() {
         document.getElementById("kpi-trend-note").textContent = "Not enough data";
     }
 }
+
+// Gender ratio KPI
+    const sexYear = sexRoadUserData.filter(d => d.year === selectedYear);
+    const totalMale = d3.sum(sexYear.filter(d => d.sex === "Male"), d => d.hospitalisations);
+    const totalFemale = d3.sum(sexYear.filter(d => d.sex === "Female"), d => d.hospitalisations);
+    const totalSex = totalMale + totalFemale;
+    if (totalSex > 0) {
+        const malePct = (totalMale / totalSex * 100).toFixed(0);
+        document.getElementById("kpi-gender").textContent = `${malePct}% Male`;
+        document.getElementById("kpi-gender-note").textContent = `${formatNumber(totalMale)} of ${formatNumber(totalSex)} in ${selectedYear}`;
+    } else {
+        document.getElementById("kpi-gender").textContent = "—";
+        document.getElementById("kpi-gender-note").textContent = "No sex data";
+    }
 
 // ======================== DRAWING HELPERS ========================
 function clearContainer(id) { const c = document.getElementById(id); if (c) c.innerHTML = ""; return c; }
