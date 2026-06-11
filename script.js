@@ -23,6 +23,7 @@ let selectedRoadUsers = [];
 let metricMode = "raw";
 let currentHighlight = null;
 let tooltip = null;
+let sexRoadUserData = [];
 
 const chartWidth = 520;
 const chartHeight = 430;
@@ -49,11 +50,23 @@ const colourRoad = {
     "Bus occupant": "#fb923c",
     "Other or unknown": "#94a3b8"
 };
+
+// Age group ordering and colours
+const ageGroups = ["0-7", "8-16", "17-25", "26-39", "40-64", "65-74", "75+"];
+const colourAge = {
+    "0-7":   "#67e8f9",
+    "8-16":  "#38bdf8",
+    "17-25": "#818cf8",
+    "26-39": "#c084fc",
+    "40-64": "#f472b6",
+    "65-74": "#fb923c",
+    "75+":   "#fbbf24"
+};
 const fallbackColours = ["#38bdf8", "#22d3ee", "#2dd4bf", "#c084fc", "#fbbf24", "#f472b6", "#a3e635"];
 
 // ======================== CUBE STATE ========================
 const FACE_ROTATIONS = { front: { y: 0 }, right: { y: -90 }, back: { y: 180 }, left: { y: 90 } };
-const FACE_LABELS = { front: "Stream graph", right: "Parliament chart", back: "Waffle chart", left: "Choropleth map" };
+const FACE_LABELS = { front: "Age breakdown", right: "Parliament chart", back: "Waffle chart", left: "Sex pyramid" };
 
 const DEFAULT_TILT = -10;   // resting vertical tilt
 const MAX_TILT = 18;        // never let it flip — clamp vertical drag
@@ -71,7 +84,17 @@ let activeFace = "front";
 
 // ======================== LOAD CSV ========================
 function loadData() {
-    d3.csv("mergedData.csv").then(data => {
+    Promise.all([
+        d3.csv("mergedData.csv"),
+        d3.csv("sexByRoadUser.csv")
+    ]).then(([data, sexData]) => {
+        // Parse sex × road user data
+        sexRoadUserData = sexData.map(d => ({
+            year: +d.year,
+            roadUser: d.roadUser,
+            sex: d.sex,
+            hospitalisations: +d.hospitalisations
+        }));
         data.forEach(d => {
             d.year = toNumber(d["Calendar year"]);
             d.hospitalisations = toNumber(d.Hospitalisations);
@@ -175,7 +198,7 @@ function attachEvents() {
 
 function updateStaticLabels() {
     const y = selectedYear ?? "—";
-    ["hero-year", "parliament-year", "waffle-year", "choropleth-year"].forEach(id => {
+    ["hero-year", "parliament-year", "waffle-year", "choropleth-year", "stream-year-pill"].forEach(id => {
         const el = document.getElementById(id); if (el) el.textContent = y;
     });
     document.getElementById("kpi-focus").textContent = selectedState;
@@ -256,6 +279,34 @@ function getBedDayShare() {
     return selectedRoadUsers.map(ru => ({ name: ru, value: row[ru] || 0 })).filter(d => d.value > 0);
 }
 
+function getAgeTrends() {
+    const cand = fullData.filter(d => d.breakdownType.toLowerCase() === "age group" && ageGroups.includes(d.roadUser));
+    let rows;
+    if (selectedState === "Australia") rows = cand;
+    else rows = cand.filter(d => d.state === selectedState);
+    const map = new Map();
+    rows.forEach(d => {
+        if (!map.has(d.year)) map.set(d.year, { year: d.year, ...Object.fromEntries(ageGroups.map(a => [a, 0])) });
+        map.get(d.year)[d.roadUser] += d.hospitalisations;
+    });
+    return Array.from(map.values()).sort((a, b) => a.year - b.year);
+}
+
+function getSexByState(year) {
+    const rows = fullData.filter(d =>
+        d.breakdownType.toLowerCase() === "sex" &&
+        d.year === year &&
+        d.state !== "Australia"
+    );
+    const map = new Map();
+    rows.forEach(d => {
+        if (!map.has(d.state)) map.set(d.state, { state: d.state, Male: 0, Female: 0 });
+        if (d.roadUser === "Male") map.get(d.state).Male += d.hospitalisations;
+        if (d.roadUser === "Female") map.get(d.state).Female += d.hospitalisations;
+    });
+    return Array.from(map.values()).sort((a, b) => (b.Male + b.Female) - (a.Male + a.Female));
+}
+
 function updateKpis() {
     const national = getTotalByYearState("Australia");
     const selRow = national.find(d => d.year === selectedYear);
@@ -306,66 +357,70 @@ function hideTip() { if (tooltip) tooltip.style("display", "none"); }
 
 // FACE 1 (front): STREAM GRAPH — road users over time
 function drawStreamChart() {
-    const trends = getRoadUserTrends();
-    const active = roadUsers.filter(ru => selectedRoadUsers.includes(ru));
     const container = clearContainer("chart-stream");
     if (!container) return;
-    if (!trends.length) return emptyState(container, "No stream data available.");
-    if (!active.length) return emptyState(container, "Choose at least one road user group.");
 
-    const svg = baseSvg(container, streamMargin);
-    const x = d3.scaleLinear().domain(d3.extent(trends, d => d.year)).range([0, chartWidth]);
-    const stackGen = d3.stack().keys(active).offset(d3.stackOffsetWiggle).order(d3.stackOrderInsideOut);
-    const series = stackGen(trends);
-    const yMin = d3.min(series, l => d3.min(l, d => d[0]));
-    const yMax = d3.max(series, l => d3.max(l, d => d[1]));
-    const y = d3.scaleLinear().domain([yMin, yMax]).range([chartHeight, 0]);
+    // Get age group data for selected year, aggregated across states or filtered to selected state
+    const cand = fullData.filter(d => d.breakdownType.toLowerCase() === "age group" && ageGroups.includes(d.roadUser));
+    let rows;
+    if (selectedState === "Australia") rows = cand.filter(d => d.year === selectedYear);
+    else rows = cand.filter(d => d.year === selectedYear && d.state === selectedState);
 
-    const area = d3.area().x(d => x(d.data.year)).y0(d => y(d[0])).y1(d => y(d[1])).curve(d3.curveMonotoneX);
+    const map = new Map();
+    rows.forEach(d => map.set(d.roadUser, (map.get(d.roadUser) || 0) + d.hospitalisations));
+    const data = ageGroups.map(ag => ({ age: ag, value: map.get(ag) || 0 })).filter(d => d.value > 0);
 
-    svg.selectAll(".stream-layer")
-        .data(series).enter()
-        .append("path")
-        .attr("class", "stream-layer")
-        .attr("fill", d => colourFor(d.key, roadUsers.indexOf(d.key)))
-        .attr("stroke", "rgba(6,18,38,0.45)")
-        .attr("stroke-width", 0.6)
-        .attr("opacity", 0)
-        .attr("d", area)
+    if (!data.length) return emptyState(container, `No age data for ${selectedYear}.`);
+
+    const margin = { top: 28, right: 110, bottom: 46, left: 50 };
+    const svg = baseSvg(container, margin);
+    const total = d3.sum(data, d => d.value);
+
+    const y = d3.scaleBand().domain(data.map(d => d.age)).range([0, chartHeight]).padding(0.25);
+    const innerW = chartWidth - 60;
+    const x = d3.scaleLinear().domain([0, d3.max(data, d => d.value)]).range([0, innerW]);
+
+    // Bars
+    svg.selectAll(".age-bar")
+        .data(data).enter()
+        .append("rect")
+        .attr("class", "age-bar")
+        .attr("x", 0).attr("y", d => y(d.age))
+        .attr("width", 0).attr("height", y.bandwidth()).attr("rx", 5)
+        .attr("fill", d => colourAge[d.age] || "#94a3b8")
+        .attr("opacity", 0.9)
+        .attr("cursor", "pointer")
         .on("mouseover", function (event, d) {
             d3.select(this).attr("opacity", 1);
-            const [mx] = d3.pointer(event, svg.node());
-            const yr = Math.round(x.invert(mx));
-            const row = trends.find(t => t.year === yr);
-            const val = row ? row[d.key] : null;
-            showTip(event, `<b>${displayRoadUser(d.key)}${val != null ? " · " + yr : ""}</b><br>${val != null ? formatNumber(val) + " hospitalisations" : "Hover the band"}`);
+            const pct = (d.value / total * 100).toFixed(1);
+            showTip(event, `<b>Age ${d.age} · ${selectedYear}</b><br>${formatNumber(d.value)} hospitalisations · ${pct}%`);
         })
         .on("mousemove", function (event, d) {
-            const [mx] = d3.pointer(event, svg.node());
-            const yr = Math.round(x.invert(mx));
-            const row = trends.find(t => t.year === yr);
-            const val = row ? row[d.key] : null;
-            showTip(event, `<b>${displayRoadUser(d.key)}${val != null ? " · " + yr : ""}</b><br>${val != null ? formatNumber(val) + " hospitalisations" : ""}`);
+            const pct = (d.value / total * 100).toFixed(1);
+            showTip(event, `<b>Age ${d.age}</b><br>${formatNumber(d.value)} · ${pct}%`);
         })
-        .on("mouseout", function (event, d) {
-            d3.select(this).attr("opacity", currentHighlight && currentHighlight !== d.key ? 0.18 : 0.86);
-            hideTip();
-        })
-        .on("click", function (event, d) { currentHighlight = currentHighlight === d.key ? null : d.key; updateAllCharts(); })
-        .transition().duration(800).ease(d3.easeCubicOut)
-        .attr("opacity", d => currentHighlight && currentHighlight !== d.key ? 0.18 : 0.86);
+        .on("mouseout", function () { d3.select(this).attr("opacity", 0.9); hideTip(); })
+        .transition().duration(600).delay((d, i) => i * 60)
+        .attr("width", d => x(d.value));
 
-    svg.append("g").attr("class", "axis x-axis").attr("transform", `translate(0,${chartHeight})`)
-        .call(d3.axisBottom(x).tickFormat(d3.format("d")).ticks(Math.min(trends.length, 8)));
+    // Value labels at end of bar
+    svg.selectAll(".age-val")
+        .data(data).enter()
+        .append("text")
+        .attr("x", d => x(d.value) + 8).attr("y", d => y(d.age) + y.bandwidth() / 2)
+        .attr("dy", "0.35em").attr("text-anchor", "start")
+        .style("fill", "#e0f7ff").style("font-size", "11px").style("font-weight", "800")
+        .text(d => `${formatNumber(d.value)}  (${(d.value / total * 100).toFixed(0)}%)`);
 
-    const legend = svg.append("g").attr("transform", `translate(0, -14)`);
-    active.forEach((ru, i) => {
-        const it = legend.append("g").attr("class", "legend-item").attr("transform", `translate(${i * 110}, 0)`);
-        it.append("circle").attr("r", 5).attr("fill", colourFor(ru, roadUsers.indexOf(ru)));
-        it.append("text").attr("x", 10).attr("y", 4).style("font-size", "11px").text(displayRoadUser(ru));
-    });
+    // Age group labels on y-axis
+    svg.selectAll(".age-label")
+        .data(data).enter()
+        .append("text")
+        .attr("x", -8).attr("y", d => y(d.age) + y.bandwidth() / 2)
+        .attr("dy", "0.35em").attr("text-anchor", "end")
+        .style("fill", "#d6f0ff").style("font-size", "12px").style("font-weight", "900")
+        .text(d => d.age);
 }
-
 // FACE 2 (right): PARLIAMENT CHART — composition of selected year
 function drawParliamentChart() {
     const data = getRadialShare();
@@ -516,58 +571,80 @@ function drawWaffleChart() {
 function drawChoroplethChart() {
     const container = clearContainer("chart-choropleth");
     if (!container) return;
-    const totals = getStateTotalsForYear(selectedYear);
-    if (!totals.size) return emptyState(container, `No state data for ${selectedYear}.`);
+
+    const yearData = sexRoadUserData.filter(d => d.year === selectedYear);
+    if (!yearData.length) return emptyState(container, `No sex × road user data for ${selectedYear}.`);
+
+    const map = new Map();
+    yearData.forEach(d => {
+        if (!map.has(d.roadUser)) map.set(d.roadUser, { roadUser: d.roadUser, Male: 0, Female: 0 });
+        map.get(d.roadUser)[d.sex] += d.hospitalisations;
+    });
+    const data = Array.from(map.values())
+        .map(d => ({ ...d, total: d.Male + d.Female }))
+        .sort((a, b) => b.total - a.total);
 
     const svg = baseSvg(container, choroMargin);
-    const projection = d3.geoIdentity().reflectY(true).fitSize([chartWidth, chartHeight], AU_STATES);
-    const path = d3.geoPath(projection);
-    const maxV = d3.max([...totals.values()]) || 1;
-    const colour = d3.scaleSequential([0, maxV], d3.interpolateRgbBasis(["#16a34a", "#84cc16", "#facc15", "#f97316", "#dc2626"]));
+    const midX = chartWidth / 2;
+    const barH = Math.min(38, (chartHeight - 50) / data.length - 6);
+    const gap = 6;
+    const totalH = data.length * (barH + gap) - gap;
+    const startY = (chartHeight - totalH) / 2;
 
-    svg.selectAll(".choro-state")
-        .data(AU_STATES.features).enter()
-        .append("path")
-        .attr("class", "choro-state")
-        .attr("d", path)
-        .attr("fill", f => { const v = totals.get(f.properties.code); return v == null ? "rgba(125,211,252,0.1)" : colour(v); })
-        .attr("opacity", f => f.properties.code === selectedState ? 1 : 0.85)
-        .attr("stroke-width", f => f.properties.code === selectedState ? 2 : 0.6)
-        .attr("stroke", f => f.properties.code === selectedState ? "#67e8f9" : "rgba(7,22,46,0.6)")
-        .on("mouseover", function (event, f) {
-            const v = totals.get(f.properties.code);
-            showTip(event, `<b>${f.properties.code} · ${selectedYear}</b><br>${v == null ? "No data" : formatNumber(v) + " hospitalisations"}<br><small>Click to focus</small>`);
-        })
-        .on("mousemove", function (event, f) {
-            const v = totals.get(f.properties.code);
-            showTip(event, `<b>${f.properties.code} · ${selectedYear}</b><br>${v == null ? "No data" : formatNumber(v) + " hospitalisations"}`);
-        })
-        .on("mouseout", hideTip)
-        .on("click", function (event, f) {
-            selectedState = f.properties.code;
-            document.getElementById("state-filter").value = selectedState;
-            updateAllCharts();
-        });
+    const maxVal = d3.max(data, d => Math.max(d.Male, d.Female));
+    const xScale = d3.scaleLinear().domain([0, maxVal]).range([0, midX - 50]);
 
-    // State code labels at centroids
-    svg.selectAll(".choro-label")
-        .data(AU_STATES.features).enter()
-        .append("text")
-        .attr("class", "choro-label")
-        .attr("transform", f => `translate(${path.centroid(f)})`)
-        .attr("text-anchor", "middle").attr("dy", "0.35em")
-        .style("fill", "#e0f7ff").style("font-size", "11px").style("font-weight", "900")
-        .style("pointer-events", "none").style("text-shadow", "0 0 4px rgba(6,18,38,0.9)")
-        .text(f => f.properties.code);
+    data.forEach((d, i) => {
+        const yPos = startY + i * (barH + gap);
+        const mPct = (d.Male / d.total * 100).toFixed(0);
+        const fPct = (d.Female / d.total * 100).toFixed(0);
 
-    // Colour legend
-    const lw = 150, lh = 8, lx = chartWidth - lw, ly = chartHeight - 4;
-    const gid = `choro-grad-${Date.now()}`;
-    const grad = svg.append("defs").append("linearGradient").attr("id", gid);
-    [0, 0.5, 1].forEach(t => grad.append("stop").attr("offset", `${t * 100}%`).attr("stop-color", colour(maxV * t)));
-    svg.append("rect").attr("x", lx).attr("y", ly).attr("width", lw).attr("height", lh).attr("rx", 4).attr("fill", `url(#${gid})`);
-    svg.append("text").attr("x", lx).attr("y", ly - 5).style("fill", "rgba(160,205,240,0.8)").style("font-size", "10px").style("font-weight", "800").text("Low");
-    svg.append("text").attr("x", lx + lw).attr("y", ly - 5).attr("text-anchor", "end").style("fill", "rgba(160,205,240,0.8)").style("font-size", "10px").style("font-weight", "800").text(shortNumber(maxV));
+        svg.append("rect")
+            .attr("x", midX - 2).attr("y", yPos)
+            .attr("width", 0).attr("height", barH).attr("rx", 4)
+            .attr("fill", "#38bdf8").attr("opacity", 0.9)
+            .on("mouseover", (event) => showTip(event, `<b>${d.roadUser} · Male</b><br>${formatNumber(d.Male)} · ${mPct}%`))
+            .on("mousemove", (event) => showTip(event, `<b>${d.roadUser} · Male</b><br>${formatNumber(d.Male)} · ${mPct}%`))
+            .on("mouseout", hideTip)
+            .transition().duration(600).delay(i * 70)
+            .attr("x", midX - 2 - xScale(d.Male))
+            .attr("width", xScale(d.Male));
+
+        svg.append("rect")
+            .attr("x", midX + 2).attr("y", yPos)
+            .attr("width", 0).attr("height", barH).attr("rx", 4)
+            .attr("fill", "#f472b6").attr("opacity", 0.9)
+            .on("mouseover", (event) => showTip(event, `<b>${d.roadUser} · Female</b><br>${formatNumber(d.Female)} · ${fPct}%`))
+            .on("mousemove", (event) => showTip(event, `<b>${d.roadUser} · Female</b><br>${formatNumber(d.Female)} · ${fPct}%`))
+            .on("mouseout", hideTip)
+            .transition().duration(600).delay(i * 70)
+            .attr("width", xScale(d.Female));
+
+        svg.append("text")
+            .attr("x", midX - 6 - xScale(d.Male)).attr("y", yPos + barH / 2)
+            .attr("dy", "0.35em").attr("text-anchor", "end")
+            .style("fill", "#7dd3fc").style("font-size", "10px").style("font-weight", "800")
+            .text(shortNumber(d.Male));
+
+        svg.append("text")
+            .attr("x", midX + 6 + xScale(d.Female)).attr("y", yPos + barH / 2)
+            .attr("dy", "0.35em").attr("text-anchor", "start")
+            .style("fill", "#f9a8d4").style("font-size", "10px").style("font-weight", "800")
+            .text(shortNumber(d.Female));
+
+        svg.append("text")
+            .attr("x", midX).attr("y", yPos + barH / 2)
+            .attr("dy", "0.35em").attr("text-anchor", "middle")
+            .style("fill", "#e0f7ff").style("font-size", "10px").style("font-weight", "900")
+            .style("text-shadow", "0 0 8px rgba(6,18,38,1)")
+            .text(d.roadUser);
+    });
+
+    const ly = startY + totalH + 18;
+    [{ label: "Male", col: "#38bdf8", x: midX - 55 }, { label: "Female", col: "#f472b6", x: midX + 15 }].forEach(l => {
+        svg.append("rect").attr("x", l.x).attr("y", ly).attr("width", 11).attr("height", 11).attr("rx", 3).attr("fill", l.col);
+        svg.append("text").attr("x", l.x + 16).attr("y", ly + 10).style("fill", "#d6f0ff").style("font-size", "11px").style("font-weight", "800").text(l.label);
+    });
 }
 
 // ============================================================
