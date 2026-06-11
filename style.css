@@ -57,10 +57,11 @@ body {
 /* ==================== HEADER ==================== */
 .dashboard-header {
     display: grid;
-    grid-template-columns: minmax(0, 1.618fr) minmax(230px, 1fr);
-    gap: clamp(1rem, 3vw, 3rem);
+    grid-template-columns: minmax(0, 1.618fr) minmax(200px, auto);
+    gap: clamp(1rem, 2vw, 1.5rem);
     align-items: center;
-    padding: clamp(1rem, 4vw, 2rem);
+    /* Reduced vertical padding from 2rem to 1rem */
+    padding: 1rem clamp(1rem, 3vw, 2rem); 
     color: white;
     background:
         linear-gradient(115deg, rgba(3, 105, 161, 0.96), rgba(14, 165, 233, 0.88)),
@@ -68,11 +69,12 @@ body {
     position: relative;
     isolation: isolate;
 }
+/* Scaled down the background decorative glow to avoid bloated heights */
 .dashboard-header::after {
     content: "";
     position: absolute;
-    inset: auto -8% -32% 48%;
-    height: 230px;
+    inset: auto -8% -10% 48%;
+    height: 120px; 
     border-radius: 999px;
     background: rgba(186, 230, 253, 0.24);
     filter: blur(4px);
@@ -83,51 +85,85 @@ body {
     color: #e0f7ff; font-size: 0.72rem; font-weight: 800;
     letter-spacing: 0.14em; text-transform: uppercase;
 }
+/* Shrinked title text sizing and margin gaps */
 .dashboard-header h1 {
-    max-width: 900px; margin-top: 0.45rem;
-    font-size: clamp(2rem, 5vw, 4.6rem); font-weight: 850;
-    line-height: 0.98; letter-spacing: -0.06em;
+    max-width: 900px; 
+    margin-top: 0.2rem;
+    font-size: clamp(1.6rem, 3.5vw, 2.5rem); /* Dropped from 4.6rem max */
+    font-weight: 850;
+    line-height: 1.1; 
+    letter-spacing: -0.04em;
 }
+/* Tighter gap above subhead text */
 .subhead {
-    max-width: 720px; margin-top: 1rem;
+    max-width: 720px; 
+    margin-top: 0.35rem; 
     color: rgba(240, 249, 255, 0.86);
-    font-size: clamp(0.92rem, 1.4vw, 1.08rem);
+    font-size: clamp(0.85rem, 1.2vw, 0.95rem);
 }
+/* Streamlined the right side "Selected Year" metric container */
 .hero-panel {
-    justify-self: end; width: min(100%, 360px); padding: 1.4rem;
-    border: 1px solid rgba(255, 255, 255, 0.36); border-radius: var(--radius-xl);
+    justify-self: end; 
+    width: auto; 
+    min-width: 140px;
+    padding: 0.6rem 1.2rem; 
+    border: 1px solid rgba(255, 255, 255, 0.36); 
+    border-radius: 16px;
     background: rgba(255, 255, 255, 0.18);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    text-align: center;
 }
+/* Made the large year number font much more compact */
 .hero-number {
-    display: block; font-size: clamp(3rem, 7vw, 5.6rem);
-    font-weight: 900; line-height: 0.9; letter-spacing: -0.08em;
+    display: block; 
+    font-size: clamp(2rem, 4vw, 3.2rem); /* Dropped from 5.6rem max */
+    font-weight: 900; 
+    line-height: 1; 
+    letter-spacing: -0.04em;
 }
-.hero-label { display: block; margin-top: 0.85rem; color: rgba(240, 249, 255, 0.88); font-weight: 700; }
+.hero-label { 
+    display: block; 
+    margin-top: 0.2rem; 
+    color: rgba(240, 249, 255, 0.88); 
+    font-size: 0.75rem; 
+    font-weight: 700; 
+}
 
 /* ==================== KPI ==================== */
 .kpi-grid {
-    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1rem; padding: 1.15rem clamp(1rem, 3vw, 2rem) 0;
+    display: grid; 
+    /* Changed from repeat(4, 1fr) to a flexible autofit that looks better scaled down */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem; /* Reduced gap from 1rem */
+    padding: 1rem clamp(1rem, 3vw, 2rem) 0; /* Tighter top padding */
 }
 .kpi-card {
-    position: relative; overflow: hidden; padding: 1.15rem;
-    border: 1px solid var(--border); border-radius: var(--radius-lg);
-    background: var(--card); box-shadow: var(--shadow-soft);
+    position: relative; 
+    overflow: hidden; 
+    padding: 0.85rem 1.1rem; /* Reduced vertical padding from 1.15rem */
+    border: 1px solid var(--border); 
+    border-radius: 16px; /* slightly tighter corners for a smaller footprint */
+    background: var(--card); 
+    box-shadow: var(--shadow-soft);
 }
 .kpi-card::before {
-    content: ""; position: absolute; top: -50%; right: -28%;
-    width: 170px; height: 170px; border-radius: 50%;
+    content: ""; position: absolute; top: -40%; right: -20%;
+    width: 120px; height: 120px; border-radius: 50%;
     background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(14, 165, 233, 0.06));
 }
 .accent-card::before { background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(34, 211, 238, 0.08)); }
 .kpi-label, .kpi-card small {
-    display: block; color: var(--muted); font-size: 0.78rem; font-weight: 760;
+    display: block; color: var(--muted); font-size: 0.7rem; font-weight: 760;
 }
 .kpi-label { text-transform: uppercase; letter-spacing: 0.08em; }
+/* Scaled down the prominent numbers significantly */
 .kpi-card strong {
-    display: block; margin: 0.42rem 0 0.15rem; color: var(--primary-dark);
-    font-size: clamp(1.35rem, 2.8vw, 2.25rem); line-height: 1; letter-spacing: -0.045em;
+    display: block; 
+    margin: 0.2rem 0 0.1rem; /* Tighter margins around the large metric */
+    color: var(--primary-dark);
+    font-size: clamp(1.2rem, 2.2vw, 1.75rem); /* Dropped from 2.25rem max */
+    line-height: 1.1; 
+    letter-spacing: -0.03em;
 }
 
 /* ==================== FILTER BAR ==================== */
@@ -161,6 +197,12 @@ body {
     transform: translateY(-1px); border-color: var(--primary);
     background: #ffffff; box-shadow: 0 10px 24px rgba(14, 165, 233, 0.14);
 }
+
+/* Hides the metric filter wrapper from view while preserving DOM functionality */
+.metric-filter-group {
+    display: none !important;
+}
+
 .checkbox-group { display: flex; flex-wrap: wrap; gap: 0.55rem; }
 .checkbox-group label {
     display: inline-flex; align-items: center; gap: 0.35rem; min-height: 36px;
