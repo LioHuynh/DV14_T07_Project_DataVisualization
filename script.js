@@ -66,7 +66,7 @@ const fallbackColours = ["#38bdf8", "#22d3ee", "#2dd4bf", "#c084fc", "#fbbf24", 
 
 // ======================== CUBE STATE ========================
 const FACE_ROTATIONS = { front: { y: 0 }, right: { y: -90 }, back: { y: 180 }, left: { y: 90 } };
-const FACE_LABELS = { front: "Age breakdown", right: "Parliament chart", back: "Waffle chart", left: "Sex pyramid" };
+const FACE_LABELS = { front: "Who gets hurt?", right: "How they travel", back: "Who stays longest?", left: "The gender gap" };
 
 const DEFAULT_TILT = -10;   // resting vertical tilt
 const MAX_TILT = 18;        // never let it flip — clamp vertical drag
@@ -572,17 +572,62 @@ function drawChoroplethChart() {
     const container = clearContainer("chart-choropleth");
     if (!container) return;
 
-    const yearData = sexRoadUserData.filter(d => d.year === selectedYear);
-    if (!yearData.length) return emptyState(container, `No sex × road user data for ${selectedYear}.`);
+    // National sex × road user ratios for the selected year
+    const natYear = sexRoadUserData.filter(d => d.year === selectedYear);
+    if (!natYear.length) return emptyState(container, `No sex × road user data for ${selectedYear}.`);
 
-    const map = new Map();
-    yearData.forEach(d => {
-        if (!map.has(d.roadUser)) map.set(d.roadUser, { roadUser: d.roadUser, Male: 0, Female: 0 });
-        map.get(d.roadUser)[d.sex] += d.hospitalisations;
+    // Build national ratio lookup: { "Car": { Male: 0.48, Female: 0.52 }, ... }
+    const natTotals = new Map();
+    natYear.forEach(d => {
+        if (!natTotals.has(d.roadUser)) natTotals.set(d.roadUser, { Male: 0, Female: 0 });
+        natTotals.get(d.roadUser)[d.sex] += d.hospitalisations;
     });
-    const data = Array.from(map.values())
-        .map(d => ({ ...d, total: d.Male + d.Female }))
-        .sort((a, b) => b.total - a.total);
+    const ratios = new Map();
+    natTotals.forEach((v, k) => {
+        const t = v.Male + v.Female;
+        ratios.set(k, { Male: t > 0 ? v.Male / t : 0.5, Female: t > 0 ? v.Female / t : 0.5 });
+    });
+
+    // Map long road user names to short names used in sexByRoadUser.csv
+    const nameMap = {
+        "Car driver, passenger or unknown position": "Car",
+        "Motorcyclist": "Motorcyclist",
+        "Pedal cyclist": "Pedal cyclist",
+        "Pedestrian": "Pedestrian",
+        "Heavy transport driver, passenger or unknown position": "Heavy transport",
+        "Pick-up truck or van occupant": "Pick-up / van",
+        "Bus occupant": "Bus occupant",
+        "Other or unknown": "Other"
+    };
+
+    let data;
+    if (selectedState === "Australia") {
+        // Use actual national cross-tab
+        const map = new Map();
+        natYear.forEach(d => {
+            if (!map.has(d.roadUser)) map.set(d.roadUser, { roadUser: d.roadUser, Male: 0, Female: 0 });
+            map.get(d.roadUser)[d.sex] += d.hospitalisations;
+        });
+        data = Array.from(map.values());
+    } else {
+        // Estimate: state road user totals × national sex ratios
+        const stateRU = fullData.filter(d =>
+            isRoadUser(d) && d.year === selectedYear && d.state === selectedState
+        );
+        const map = new Map();
+        stateRU.forEach(d => {
+            const shortName = nameMap[d.roadUser] || d.roadUser;
+            const ratio = ratios.get(shortName);
+            if (!ratio) return;
+            if (!map.has(shortName)) map.set(shortName, { roadUser: shortName, Male: 0, Female: 0 });
+            map.get(shortName).Male += Math.round(d.hospitalisations * ratio.Male);
+            map.get(shortName).Female += Math.round(d.hospitalisations * ratio.Female);
+        });
+        data = Array.from(map.values());
+    }
+
+    data = data.map(d => ({ ...d, total: d.Male + d.Female })).sort((a, b) => b.total - a.total);
+    if (!data.length) return emptyState(container, `No data for ${selectedState} in ${selectedYear}.`);
 
     const svg = baseSvg(container, choroMargin);
     const midX = chartWidth / 2;
@@ -593,6 +638,12 @@ function drawChoroplethChart() {
 
     const maxVal = d3.max(data, d => Math.max(d.Male, d.Female));
     const xScale = d3.scaleLinear().domain([0, maxVal]).range([0, midX - 50]);
+
+
+    // State label
+    svg.append("text").attr("x", midX).attr("y", startY - 18).attr("text-anchor", "middle")
+        .style("fill", "rgba(160,205,240,0.7)").style("font-size", "9px").style("font-weight", "800")
+        .text(selectedState === "Australia" ? "National (actual)" : `${selectedState} (estimated)`);
 
     data.forEach((d, i) => {
         const yPos = startY + i * (barH + gap);
