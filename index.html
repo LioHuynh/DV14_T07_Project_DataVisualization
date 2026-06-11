@@ -85,12 +85,12 @@
                             <!-- FACE 1: FRONT — Stream graph -->
                             <div class="cube-face face-front" data-face="front">
                                 <div class="face-header">
-                                    <span class="face-kicker">Flow</span>
-                                    <h3>Road user stream</h3>
-                                    <span class="face-pill">2011–2021</span>
+                                    <span class="face-kicker">Age</span>
+                                    <h3>Age breakdown</h3>
+                                    <span class="face-year" id="stream-year-pill">2021</span>
                                 </div>
                                 <div class="face-chart" id="chart-stream"></div>
-                                <p class="face-note">Stream thickness = hospitalisations per road user, year over year.
+                                <p class="face-note">Hospitalisations by age group for the selected year.</p>
                                 </p>
                             </div>
 
@@ -120,12 +120,12 @@
                             <!-- FACE 4: LEFT — Choropleth map -->
                             <div class="cube-face face-left" data-face="left">
                                 <div class="face-header">
-                                    <span class="face-kicker">Geography</span>
-                                    <h3>State choropleth <span class="face-year" id="choropleth-year">2021</span></h3>
-                                    <span class="face-pill">Click a state</span>
+                                    <span class="face-kicker">Gender</span>
+                                    <h3>Sex × road user <span class="face-year" id="choropleth-year">2021</span></h3>
+                                    <span class="face-pill">Male vs Female</span>
                                 </div>
                                 <div class="face-chart" id="chart-choropleth"></div>
-                                <p class="face-note">Darker states = more hospitalisations · Click to set focus.</p>
+                                <p class="face-note">Motorcyclists are 89% male · Bus occupants are 65% female · Car is nearly 50/50.</p>
                             </div>
 
                             <!-- Decorative glass caps (no data) -->
@@ -146,7 +146,7 @@
 
                 <div class="cube-controls" role="tablist" aria-label="Snap to face">
                     <button class="face-btn active" type="button" data-face="front" role="tab" aria-selected="true">
-                        <span class="btn-num">1</span><span class="btn-label">Stream</span>
+                        <span class="btn-num">1</span><span class="btn-label">Age Breakdown</span>
                     </button>
                     <button class="face-btn" type="button" data-face="right" role="tab" aria-selected="false">
                         <span class="btn-num">2</span><span class="btn-label">Parliament</span>
@@ -155,7 +155,7 @@
                         <span class="btn-num">3</span><span class="btn-label">Waffle</span>
                     </button>
                     <button class="face-btn" type="button" data-face="left" role="tab" aria-selected="false">
-                        <span class="btn-num">4</span><span class="btn-label">Choropleth</span>
+                        <span class="btn-num">4</span><span class="btn-label">Pyramid</span>
                     </button>
                 </div>
 
