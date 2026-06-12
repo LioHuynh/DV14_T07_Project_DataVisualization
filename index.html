@@ -19,29 +19,36 @@
                 <p class="subhead">Australia · 2011–2021 · Four perspectives on a rotating prism · Source: BITRE / AIHW
                 </p>
             </div>
-            <div class="hero-panel">
+            <div class="hero-panel" data-tip="The active calendar year filtering all charts, trends, and data aggregates across the dashboard view.">
                 <span class="hero-number" id="hero-year">2021</span>
                 <span class="hero-label">Selected year</span>
             </div>
         </header>
 
         <section class="kpi-grid" aria-label="Dashboard summary">
-            <article class="kpi-card">
+            <article class="kpi-card"
+                data-tip="Total count of patients admitted to Australian hospitals due to road traffic crash injuries within the selected calendar year.">
                 <span class="kpi-label">Total hospitalisations</span>
                 <strong id="kpi-total">—</strong>
                 <small id="kpi-total-note">Selected year</small>
             </article>
-            <article class="kpi-card">
+
+            <article class="kpi-card"
+                data-tip="The Australian state or territory reporting the highest raw volume of road crash hospital admissions for the selected period.">
                 <span class="kpi-label">Top state / territory</span>
                 <strong id="kpi-top-state">—</strong>
                 <small id="kpi-top-state-note">By raw count</small>
             </article>
-            <article class="kpi-card">
+
+            <article class="kpi-card"
+                data-tip="The comparative trajectory showing growth or reduction in admissions over time across the reported historical window.">
                 <span class="kpi-label">Selected trend</span>
                 <strong id="kpi-trend">—</strong>
                 <small id="kpi-trend-note">From first to latest year</small>
             </article>
-            <article class="kpi-card accent-card">
+
+            <article class="kpi-card accent-card"
+                data-tip="The proportional percentage of total admissions represented by male patients, tracking demographic gaps in severe crash outcomes.">
                 <span class="kpi-label">Male share</span>
                 <strong id="kpi-gender">—</strong>
                 <small id="kpi-gender-note">Of all road crash hospitalisations</small>
@@ -82,50 +89,46 @@
                     <div class="cube-scene">
                         <div class="cube" id="cube">
 
-                            <!-- FACE 1: FRONT — Stream graph -->
                             <div class="cube-face face-front" data-face="front">
                                 <div class="face-header">
-                                    <span class="face-kicker">Age</span>
-                                    <h3>Age breakdown</h3>
-                                    <span class="face-year" id="stream-year-pill">2021</span>
+                                    <span class="face-kicker">Demographics</span>
+                                    <h3>Longitudinal Trends by Age Cohort <span class="face-year"
+                                            id="stream-year-pill">2021</span></h3>
                                 </div>
                                 <div class="face-chart" id="chart-stream"></div>
                                 <p class="face-note">Hospitalisations by age group for the selected year.</p>
-                                </p>
                             </div>
 
-                            <!-- FACE 2: RIGHT — Parliament chart -->
                             <div class="cube-face face-right" data-face="right">
                                 <div class="face-header">
-                                    <span class="face-kicker">Composition</span>
-                                    <h3>Parliament of road users <span class="face-year"
+                                    <span class="face-kicker">Modal Distribution</span>
+                                    <h3>Incident Share by Road User Type <span class="face-year"
                                             id="parliament-year">2021</span></h3>
-                                    <span class="face-pill">seats = share</span>
                                 </div>
                                 <div class="face-chart" id="chart-parliament"></div>
                                 <p class="face-note">Each seat is a slice of the selected year's hospitalisations.</p>
                             </div>
 
-                            <!-- FACE 3: BACK — Waffle chart -->
                             <div class="cube-face face-back" data-face="back">
                                 <div class="face-header">
-                                    <span class="face-kicker">Share</span>
-                                    <h3>Bed day burden <span class="face-year" id="waffle-year">2021</span></h3>
-                                    <span class="face-pill">100 = 100% bed days</span>
+                                    <span class="face-kicker">Severity Profile</span>
+                                    <h3>Cumulative Hospital Bed-Days <span class="face-year"
+                                            id="waffle-year">2021</span></h3>
                                 </div>
                                 <div class="face-chart" id="chart-waffle"></div>
-                                <p class="face-note">Each square ≈ 1% of the year's total bed days by road user — reveals injury severity.</p>
+                                <p class="face-note">Each square ≈ 1% of the year's total bed days by road user —
+                                    reveals injury severity.</p>
                             </div>
 
-                            <!-- FACE 4: LEFT — Choropleth map -->
                             <div class="cube-face face-left" data-face="left">
                                 <div class="face-header">
-                                    <span class="face-kicker">Gender</span>
-                                    <h3>Sex × road user <span class="face-year" id="choropleth-year">2021</span></h3>
-                                    <span class="face-pill">Male vs Female</span>
+                                    <span class="face-kicker">Risk Demarcation</span>
+                                    <h3>Sex Breakdown Across Transport Modes <span class="face-year"
+                                            id="choropleth-year">2021</span></h3>
                                 </div>
                                 <div class="face-chart" id="chart-choropleth"></div>
-                                <p class="face-note">Motorcyclists are 89% male · Bus occupants are 65% female · Car is nearly 50/50.</p>
+                                <p class="face-note">Motorcyclists are 89% male · Bus occupants are 65% female · Car is
+                                    nearly 50/50.</p>
                             </div>
 
                             <!-- Decorative glass caps (no data) -->
@@ -172,8 +175,7 @@
         </main>
 
         <footer class="dashboard-footer">
-            <p>Data limitations: n.p. values omitted; break-in-series in NSW (2017) and Victoria (2012) should be
-                annotated in the final report.</p>
+            <p>Data limitations: n.p. values omitted; break-in-series in NSW (2017) and Victoria (2012) a nnonated.</p>
         </footer>
     </div>
 
