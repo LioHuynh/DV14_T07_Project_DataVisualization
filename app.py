@@ -1,58 +1,62 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import pandas as pd
-import json
 
-# 1. Set page to wide mode and hide the sidebar by default
+# 1. Page config
 st.set_page_config(
-    layout="wide", 
-    page_title="Road Crash Data Cube", 
-    initial_sidebar_state="collapsed"
+    layout="wide",
+    page_title="Road Crash Data Cube",
+    initial_sidebar_state="collapsed",
 )
 
-# 2. CSS to hide Streamlit's header, footer, and padding
-st.markdown("""
+# 2. Strip Streamlit's chrome and padding so the cube fills the page
+st.markdown(
+    """
     <style>
-        #root > div:nth-child(1) > div > div > div > div > section > div {
-            padding-top: 0rem;
-            padding-bottom: 0rem;
-            padding-left: 0rem;
-            padding-right: 0rem;
-        }
         header {visibility: hidden;}
-        footer {visibility: visible;}
         #MainMenu {visibility: hidden;}
-        footer {
-            visibility: visible !important;
-            display: block !important;
-            position: relative; 
-            margin-top: 50px; /* Adds space above the footer */
-        }
+        .block-container {padding: 0rem !important; max-width: 100% !important;}
+        [data-testid="stAppViewContainer"] {padding: 0 !important;}
+        iframe {width: 100% !important;}
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True,
+)
 
+
+@st.cache_data
 def get_html():
-    # Load assets
-    with open('index.html', 'r', encoding='utf-8') as f:
+    # --- Load page assets ---
+    with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
-    with open('style.css', 'r', encoding='utf-8') as f:
+    with open("style.css", "r", encoding="utf-8") as f:
         css = f.read()
-    with open('script.js', 'r', encoding='utf-8') as f:
+    with open("script.js", "r", encoding="utf-8") as f:
         js = f.read()
-    
-    # Load data
-    df = pd.read_csv('mergedData.csv')
-    data_json = df.to_json(orient='records')
 
-    # Inject CSS
-    html = html.replace('<link rel="stylesheet" href="style.css">', f'<style>{css}</style>')
-    
-    # Inject JS and Data
-    js_with_data = js.replace('d3.csv("mergedData.csv")', f'Promise.resolve({data_json})')
-    html = html.replace('<script src="script.js"></script>', f'<script>{js_with_data}</script>')
-    
+    # --- Load BOTH datasets and serialise to JSON ---
+    merged_json = pd.read_csv("mergedData.csv").to_json(orient="records")
+    sex_json = pd.read_csv("sexByRoadUser.csv").to_json(orient="records")
+
+    # --- Inject the stylesheet inline ---
+    html = html.replace(
+        '<link rel="stylesheet" href="style.css">',
+        f"<style>{css}</style>",
+    )
+
+    # --- Replace BOTH d3.csv() fetches with the embedded data ---
+    # (the iframe can't fetch local files, so we hand the data straight to the script)
+    js = js.replace('d3.csv("mergedData.csv")', f"Promise.resolve({merged_json})")
+    js = js.replace('d3.csv("sexByRoadUser.csv")', f"Promise.resolve({sex_json})")
+
+    # --- Inject the script inline ---
+    html = html.replace(
+        '<script src="script.js"></script>',
+        f"<script>{js}</script>",
+    )
+
     return html
 
-# 3. Render as a full-screen component
-# We use st.components.v1.html with height=1000 or a calculated vh
-components.html(get_html(), height=1200, scrolling=False)
+
+# 3. Render the full dashboard. scrolling=True so nothing gets clipped.
+components.html(get_html(), height=1250, scrolling=True)
