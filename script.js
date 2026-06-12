@@ -1,1149 +1,1532 @@
-:root {
-    /* ===== UNIVERSE DARK MODE PALETTE ===== */
-    --bg: #04091c;
-    --card: rgba(11, 26, 54, 0.66);
-    --card-2: rgba(9, 21, 45, 0.55);
-    --ink: #dceeff;
-    --muted: #7ea6d4;
-    --primary: #38bdf8;
-    --primary-dark: #0b3a66;
-    --primary-text: #7dd3fc;
-    --cyan: #22d3ee;
-    --teal: #14b8a6;
-    --violet: #7c3aed;
-    --violet-soft: #a78bfa;
-    --gold: #fbbf24;
-    --border: rgba(56, 189, 248, 0.22);
-    --border-soft: rgba(56, 189, 248, 0.12);
-    --shadow: 0 24px 64px rgba(0, 0, 0, 0.62);
-    --shadow-soft: 0 16px 38px rgba(0, 0, 0, 0.46);
-    --radius-xl: 30px;
-    --radius-lg: 22px;
-
-    /* Holographic cube tokens (already deep-space — kept) */
-    --cube-size: 550px;
-    --cube-perspective: 2000px;
-    --holo-edge: rgba(34, 211, 238, 0.9);
-    --holo-glow: rgba(34, 211, 238, 0.55);
-    --holo-glass: rgba(7, 22, 46, 0.62);
-    --holo-glass-2: rgba(12, 34, 64, 0.55);
-    --holo-ink: rgba(214, 240, 255, 0.92);
-    --holo-ink-dim: rgba(160, 205, 240, 0.7);
-    --cube-spin-duration: 750ms;
-    --cube-spin-ease: cubic-bezier(.22, 1, .36, 1);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    position: relative;
-    min-height: 100vh;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    /* Universe: nebula glows over deep navy-black */
-    background-color: #03071a;
-    background-image:
-        radial-gradient(circle at 15% 12%, rgba(34, 211, 238, 0.16), transparent 38%),
-        radial-gradient(circle at 85% 8%, rgba(124, 58, 237, 0.18), transparent 42%),
-        radial-gradient(circle at 50% 118%, rgba(14, 165, 233, 0.16), transparent 55%),
-        linear-gradient(165deg, #04081d 0%, #060c26 52%, #0a1030 100%);
-    background-attachment: fixed;
-    color: var(--ink);
-    line-height: 1.5;
-    overscroll-behavior-y: contain;
-}
-
-/* Starfield — sits behind all content, faintly visible through the glass panels */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image:
-        radial-gradient(1.5px 1.5px at 20% 30%, rgba(255, 255, 255, 0.9), transparent),
-        radial-gradient(1.5px 1.5px at 70% 22%, rgba(190, 225, 255, 0.8), transparent),
-        radial-gradient(1px 1px at 40% 68%, rgba(255, 255, 255, 0.7), transparent),
-        radial-gradient(1px 1px at 85% 58%, rgba(255, 255, 255, 0.6), transparent),
-        radial-gradient(1px 1px at 60% 85%, rgba(200, 230, 255, 0.7), transparent),
-        radial-gradient(1.5px 1.5px at 10% 80%, rgba(255, 255, 255, 0.8), transparent),
-        radial-gradient(1px 1px at 92% 36%, rgba(255, 255, 255, 0.6), transparent),
-        radial-gradient(1px 1px at 32% 50%, rgba(255, 255, 255, 0.5), transparent),
-        radial-gradient(1px 1px at 50% 15%, rgba(255, 255, 255, 0.55), transparent);
-    background-repeat: repeat;
-    background-size: 620px 620px;
-    opacity: 0.6;
-}
-
-.dashboard {
-    position: relative;
-    width: min(1500px, calc(100% - 28px));
-    margin: 14px auto;
-    overflow: hidden;
-    border: 1px solid var(--border-soft);
-    border-radius: 34px;
-    background: rgba(8, 18, 40, 0.55);
-    box-shadow: var(--shadow), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(18px);
-}
-
-/* ==================== HEADER ==================== */
-.dashboard-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1.618fr) auto;
-    gap: 1.5rem;
-    align-items: center;
-    padding: 0.85rem clamp(1rem, 3vw, 2rem);
-    color: white;
-    position: relative;
-    isolation: isolate;
-    /* Aurora: cyan + violet corner glows over a lifted navy — clearly brighter than the body */
-    background:
-        radial-gradient(120% 150% at 0% 0%, rgba(34, 211, 238, 0.16), transparent 46%),
-        radial-gradient(120% 160% at 100% 0%, rgba(124, 58, 237, 0.22), transparent 52%),
-        linear-gradient(118deg, #0a1c40 0%, #0d264f 46%, #122a5c 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.dashboard-header::after {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--cyan) 25%, var(--violet-soft) 75%, transparent);
-    box-shadow: 0 0 14px rgba(34, 211, 238, 0.5);
-    z-index: 1;
-    pointer-events: none;
-}
-
-.eyebrow,
-.face-kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    color: #7de3ff;
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-.dashboard-header h1 {
-    max-width: 900px;
-    margin-top: 0.1rem;
-    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-    text-shadow: 0 0 18px rgba(34, 211, 238, 0.25);
-}
-
-.subhead {
-    max-width: 750px;
-    margin-top: 0.15rem;
-    color: rgba(200, 226, 252, 0.82);
-    font-size: clamp(0.78rem, 1.1vw, 0.88rem);
-    line-height: 1.3;
-}
-
-.hero-panel {
-    justify-self: end;
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    padding: 0.45rem 0.95rem;
-    border: 1px solid rgba(34, 211, 238, 0.28);
-    border-radius: 12px;
-    background: rgba(34, 211, 238, 0.08);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-    cursor: help;
-    will-change: transform, border-color, background-color;
-    transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1),
-                border-color 0.22s cubic-bezier(0.25, 1, 0.5, 1),
-                background-color 0.22s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.hero-panel:hover {
-    transform: translateY(-2px);
-    border-color: rgba(34, 211, 238, 0.7);
-    background: rgba(34, 211, 238, 0.14);
-}
-
-.hero-number {
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    order: 2;
-    color: #e6f7ff;
-    text-shadow: 0 0 14px rgba(34, 211, 238, 0.4);
-}
-
-.hero-label {
-    margin-top: 0;
-    color: rgba(190, 224, 252, 0.82);
-    font-size: 0.68rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    text-align: right;
-    max-width: 60px;
-    line-height: 1.1;
-    order: 1;
-}
-
-/* ==================== KPI ==================== */
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
-    padding: 0.4rem clamp(1rem, 3vw, 2rem) 0;
-}
-
-.kpi-card {
-    transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1),
-                box-shadow 0.22s cubic-bezier(0.25, 1, 0.5, 1),
-                border-color 0.22s cubic-bezier(0.25, 1, 0.5, 1);
-    cursor: help;
-    will-change: transform, box-shadow;
-}
-
-.kpi-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--cyan);
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5),
-                0 0 18px rgba(34, 211, 238, 0.25);
-}
-
-.kpi-card {
-    position: relative;
-    overflow: hidden;
-
-    display: grid;
-    grid-template-areas:
-        "label value"
-        "note  value";
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    column-gap: 0.6rem;
-    row-gap: 1px;
-
-    padding: 0.4rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--card);
-    box-shadow: var(--shadow-soft), inset 0 0 24px rgba(34, 211, 238, 0.05);
-    backdrop-filter: blur(6px);
-}
-
-.kpi-card::before {
-    content: "";
-    position: absolute;
-    top: -10%;
-    right: -5%;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(34, 211, 238, 0.22), rgba(14, 165, 233, 0.04));
-}
-
-.accent-card::before {
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.22), rgba(34, 211, 238, 0.06));
-}
-
-.kpi-label {
-    grid-area: label;
-    display: block;
-    color: var(--muted);
-    font-size: 0.65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    line-height: 1.1;
-}
-
-.kpi-card small {
-    grid-area: note;
-    display: block;
-    color: var(--muted);
-    font-size: 0.62rem;
-    font-weight: 650;
-    line-height: 1.1;
-    opacity: 0.85;
-}
-
-.kpi-card strong {
-    grid-area: value;
-    margin: 0;
-    color: var(--primary-text);
-    font-size: clamp(1.15rem, 1.8vw, 1.45rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    font-weight: 850;
-    text-align: right;
-    white-space: nowrap;
-    text-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
-}
-
-.accent-card strong {
-    color: var(--gold);
-    text-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
-}
-
-/* ==================== FILTER BAR ==================== */
-.filter-bar {
-    flex: 0 0 250px;
-    align-self: flex-start;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin: 0;
-    padding: 1.1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    background: var(--card);
-    box-shadow: var(--shadow-soft), inset 0 0 30px rgba(34, 211, 238, 0.05);
-    backdrop-filter: blur(10px);
-}
-
-.filter-group {
-    min-width: 0;
-}
-
-.filter-group>label {
-    display: block;
-    margin-bottom: 0.45rem;
-    color: var(--primary-text);
-    font-size: 0.72rem;
-    font-weight: 850;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-}
-
-.filter-group select,
-.reset-btn {
-    width: 100%;
-    min-height: 44px;
-    padding: 0.65rem 0.95rem;
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    border-radius: 999px;
-    background: rgba(8, 20, 44, 0.85);
-    color: var(--ink);
-    font: inherit;
-    font-size: 0.92rem;
-    font-weight: 730;
-    outline: none;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-
-/* Native dropdown list items (OS menu) readable on dark */
-.filter-group select option {
-    background: #0a1f3c;
-    color: var(--ink);
-}
-
-.filter-group select:hover,
-.filter-group select:focus {
-    transform: translateY(-1px);
-    border-color: var(--cyan);
-    background: rgba(12, 28, 58, 0.95);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 0 0 14px rgba(34, 211, 238, 0.2);
-}
-
-.metric-filter-group {
-    display: none !important;
-}
-
-.checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-}
-
-.checkbox-group label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    min-height: 36px;
-    padding: 0.45rem 0.72rem;
-    border: 1px solid rgba(56, 189, 248, 0.22);
-    border-radius: 999px;
-    background: linear-gradient(180deg, rgba(13, 30, 60, 0.9), rgba(8, 20, 44, 0.9));
-    color: var(--ink);
-    font-size: 0.82rem;
-    font-weight: 760;
-    cursor: pointer;
-    user-select: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.checkbox-group label:hover {
-    transform: translateY(-1px);
-    border-color: rgba(34, 211, 238, 0.5);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4), 0 0 12px rgba(34, 211, 238, 0.15);
-}
-
-.checkbox-group input {
-    width: 0.95rem;
-    height: 0.95rem;
-    accent-color: var(--cyan);
-}
-
-/* Action button — sci-fi glass that fills with light on hover */
-.reset-btn {
-    border: 1px solid rgba(34, 211, 238, 0.4);
-    background: rgba(34, 211, 238, 0.08);
-    color: #aef0ff;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    box-shadow: inset 0 0 18px rgba(34, 211, 238, 0.1);
-    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.15s ease,
-                box-shadow 0.15s ease,
-                color 0.2s ease,
-                border-color 0.2s ease;
-}
-
-.reset-btn:hover,
-.reset-btn:focus {
-    transform: translateY(-1px);
-    background: linear-gradient(135deg, var(--primary), var(--cyan));
-    color: #04122a;
-    border-color: transparent;
-    box-shadow: 0 10px 26px rgba(34, 211, 238, 0.35);
-}
-
-.reset-btn:active {
-    transform: translateY(1px);
-    box-shadow: 0 2px 8px rgba(34, 211, 238, 0.3);
-}
-
-/* ============================================================
-   ============== HOLOGRAPHIC CUBE STAGE ======================
-   ============================================================ */
-.cube-stage {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    justify-content: center;
-    gap: clamp(1rem, 2.5vw, 1.5rem);
-    padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 3vw, 2.2rem) 0.25rem;
-}
-
-/* Dark projection chamber the hologram floats inside */
-.cube-chamber {
-    transform: scale(0.75);
-    transform-origin: top center;
-    position: relative;
-    flex: 1 1 560px;
-    min-width: 0;
-    display: grid;
-    place-items: center;
-    padding: clamp(1.5rem, 4vw, 2rem) clamp(0.5rem, 3vw, 2rem);
-    margin-bottom: -50px;
-    border-radius: var(--radius-xl);
-    overflow: visible !important;
-    /* background:
-        radial-gradient(circle at 50% 42%, rgba(20, 60, 110, 0.55), transparent 60%),
-        linear-gradient(160deg, #030c1c 0%, #071630 55%, #1c0a06 100%);
-    border: 1px solid rgba(34, 211, 238, 0.22);
-    box-shadow: inset 0 0 90px rgba(0, 4, 14, 0.9), var(--shadow); */
-}
-
-.chamber-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-        linear-gradient(rgba(34, 211, 238, 0.10) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(34, 211, 238, 0.10) 1px, transparent 1px);
-    background-size: 44px 44px;
-    mask-image: radial-gradient(circle at 50% 50%, black, transparent 72%);
-    -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 72%);
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-.cube-viewport {
-    position: relative;
-    width: var(--cube-size);
-    height: var(--cube-size);
-    perspective: var(--cube-perspective);
-    perspective-origin: 50% 46%;
-    cursor: grab;
-    touch-action: pan-y;
-    user-select: none;
-    -webkit-user-select: none;
-    z-index: 1;
-}
-
-.cube-viewport.is-dragging {
-    cursor: grabbing;
-}
-
-.cube-shadow {
-    position: absolute;
-    left: 50%;
-    bottom: -4%;
-    width: 70%;
-    height: 50px;
-    transform: translateX(-50%);
-    background: radial-gradient(ellipse at center, rgba(34, 211, 238, 0.4), transparent 70%);
-    filter: blur(16px);
-    pointer-events: none;
-    z-index: 0;
-}
-
-.cube-scene {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    z-index: 1;
-}
-
-.cube {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transform-style: preserve-3d;
-    transform: rotateX(-12deg) rotateY(-24deg);
-    transition: transform var(--cube-spin-duration) var(--cube-spin-ease);
-}
-
-.cube.no-transition {
-    transition: none;
-}
-
-/* === HOLOGRAPHIC FACES === */
-.cube-face {
-    position: absolute; inset: 0;
-    width: var(--cube-size); height: var(--cube-size);
-    padding: 0.75rem 0.85rem 0.5rem;
-    border: 1.5px solid var(--holo-edge);
-    border-radius: 20px;
-    background:
-        linear-gradient(155deg, var(--holo-glass) 0%, var(--holo-glass-2) 100%);
-    box-shadow:
-        0 0 22px var(--holo-glow),
-        inset 0 0 30px rgba(34, 211, 238, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.18);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    overflow: hidden;
-    color: var(--holo-ink);
-}
-
-.cube-face::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, transparent 26%, transparent 74%, rgba(34, 211, 238, 0.14) 100%);
-    pointer-events: none;
-}
-
-.cube-face::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: repeating-linear-gradient(0deg, rgba(34, 211, 238, 0.05) 0px, rgba(34, 211, 238, 0.05) 1px, transparent 1px, transparent 4px);
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-.face-front {
-    transform: translateZ(calc(var(--cube-size) / 2));
-}
-
-.face-back {
-    transform: rotateY(180deg) translateZ(calc(var(--cube-size) / 2));
-}
-
-.face-right {
-    transform: rotateY(90deg) translateZ(calc(var(--cube-size) / 2));
-}
-
-.face-left {
-    transform: rotateY(-90deg) translateZ(calc(var(--cube-size) / 2));
-}
-
-.face-top {
-    transform: rotateX(90deg) translateZ(calc(var(--cube-size) / 2));
-}
-
-.face-bottom {
-    transform: rotateX(-90deg) translateZ(calc(var(--cube-size) / 2));
-}
-
-.cube-face.cap {
-    background:
-        radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.16), transparent 65%),
-        linear-gradient(155deg, rgba(7, 22, 46, 0.5), rgba(12, 34, 64, 0.4));
-    box-shadow: 0 0 26px var(--holo-glow), inset 0 0 40px rgba(34, 211, 238, 0.16);
-}
-
-.cube-face.cap::before {
-    background:
-        repeating-linear-gradient(45deg, rgba(34, 211, 238, 0.10) 0 2px, transparent 2px 18px);
-    opacity: 0.7;
-}
-
-/* Face header */
-.face-header {
-    position: relative; z-index: 2;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-areas: "kicker pill" "title pill";
-    column-gap: 0.7rem; align-items: center;
-    margin-bottom: 0.25rem;
-}
-
-.face-kicker {
-    grid-area: kicker;
-    color: var(--cyan);
-    font-size: 0.66rem;
-    text-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
-}
-
-.face-header h3 {
-    grid-area: title;
-    color: var(--holo-ink);
-    font-size: clamp(1rem, 1.5vw, 1.35rem);
-    font-weight: 850;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-top: 0.15rem;
-    text-shadow: 0 0 12px rgba(34, 211, 238, 0.35);
-}
-
-.face-year {
-    color: var(--cyan);
-}
-
-.face-pill {
-    grid-area: pill;
-    align-self: center;
-    padding: 0.35rem 0.65rem;
-    border: 1px solid rgba(34, 211, 238, 0.5);
-    border-radius: 999px;
-    background: rgba(34, 211, 238, 0.1);
-    color: var(--cyan);
-    font-size: 0.66rem;
-    font-weight: 850;
-    white-space: nowrap;
-}
-
-.face-chart {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-    border-radius: 14px;
-}
-
-.face-chart svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-.face-note {
-    position: relative; z-index: 2;
-    margin-top: 0.35rem;
-    padding-top: 0.35rem;
-    border-top: 1px solid rgba(34, 211, 238, 0.22);
-    color: var(--holo-ink-dim); text-align: center;
-    font-size: 0.68rem; font-weight: 650;
-}
-
-.cube-face.is-active {
-    border-color: #67e8f9;
-    box-shadow: 0 0 34px rgba(34, 211, 238, 0.8), inset 0 0 36px rgba(34, 211, 238, 0.2);
-}
-
-.cube-viewport.is-dragging .face-chart,
-.cube-viewport.is-snapping .face-chart {
-    pointer-events: none;
-}
-
-/* HUD corner brackets */
-.hud-bracket {
-    position: absolute;
-    width: 26px;
-    height: 26px;
-    z-index: 3;
-    pointer-events: none;
-    border-color: var(--holo-edge);
-    border-style: solid;
-    border-width: 0;
-    filter: drop-shadow(0 0 4px var(--holo-glow));
-}
-
-.hud-bracket.tl {
-    top: -10px;
-    left: -10px;
-    border-top-width: 2px;
-    border-left-width: 2px;
-    border-top-left-radius: 6px;
-}
-
-.hud-bracket.tr {
-    top: -10px;
-    right: -10px;
-    border-top-width: 2px;
-    border-right-width: 2px;
-    border-top-right-radius: 6px;
-}
-
-.hud-bracket.bl {
-    bottom: -10px;
-    left: -10px;
-    border-bottom-width: 2px;
-    border-left-width: 2px;
-    border-bottom-left-radius: 6px;
-}
-
-.hud-bracket.br {
-    bottom: -10px;
-    right: -10px;
-    border-bottom-width: 2px;
-    border-right-width: 2px;
-    border-bottom-right-radius: 6px;
-}
-
-/* === RIGHT-SIDE CONTROL PANEL === */
-.cube-sidebar {
-    flex: 0 0 230px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-    padding: 1.1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    background: var(--card);
-    box-shadow: var(--shadow-soft), inset 0 0 30px rgba(34, 211, 238, 0.05);
-    backdrop-filter: blur(10px);
-    align-self: flex-start;
-}
-
-.cube-hint {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.55rem;
-    color: var(--muted);
-    font-size: 0.82rem;
-    font-weight: 700;
-    line-height: 1.35;
-}
-
-.hint-dot {
-    flex: 0 0 auto;
-    margin-top: 5px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--cyan);
-    box-shadow: 0 0 0 6px rgba(34, 211, 238, 0.18);
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.18);
+// ============================================================
+// ====  ROAD CRASH HOSPITALISATIONS · HOLOGRAPHIC CUBE  ======
+// ============================================================
+// 4 faces, each a different chart type:
+//   Front  → Stream graph
+//   Right  → Parliament chart
+//   Back   → Waffle chart
+//   Left   → Choropleth map
+// Cube spins on the vertical axis only (stays upright & readable).
+// ============================================================
+
+// Australia states GeoJSON (simplified, codes match the data: NSW, Vic, Qld, SA, WA, Tas, NT, ACT)
+const AU_STATES = { "type": "FeatureCollection", "features": [{ "type": "Feature", "properties": { "code": "NSW", "name": "New South Wales" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[159.11, -31.56], [159.07, -31.6], [159.04, -31.51], [159.11, -31.56]]], [[[151.03, -33.98], [151.23, -34.03], [151.06, -34.06], [151.17, -34.09], [150.93, -34.32], [150.92, -34.49], [150.8, -34.55], [150.9, -34.6], [150.75, -34.86], [150.83, -35.07], [150.75, -34.99], [150.67, -35.04], [150.7, -35.12], [150.56, -35.09], [150.55, -35.1], [150.6, -35.19], [150.48, -35.29], [150.41, -35.53], [150.28, -35.72], [150.18, -35.7], [150.24, -35.84], [150.15, -35.89], [150.15, -36.27], [149.9, -36.91], [149.94, -37.05], [149.87, -37.08], [150.0, -37.14], [150.05, -37.26], [149.94, -37.28], [149.98, -37.51], [148.11, -36.8], [148.22, -36.6], [148.04, -36.39], [148.0, -36.05], [147.71, -35.93], [147.55, -36.0], [147.4, -35.94], [147.32, -36.06], [147.12, -35.99], [147.05, -36.11], [146.94, -36.12], [146.61, -35.97], [146.19, -36.04], [145.9, -35.95], [145.81, -35.99], [145.54, -35.8], [145.36, -35.87], [145.13, -35.82], [144.99, -35.85], [144.92, -35.99], [144.98, -36.07], [144.62, -36.08], [144.35, -35.77], [143.97, -35.5], [143.62, -35.39], [143.57, -35.21], [143.39, -35.19], [143.32, -35.04], [143.35, -34.79], [143.11, -34.68], [142.89, -34.68], [142.79, -34.55], [142.64, -34.78], [142.52, -34.76], [142.47, -34.56], [142.37, -34.53], [142.4, -34.34], [142.24, -34.31], [142.22, -34.18], [142.04, -34.1], [141.68, -34.1], [141.51, -34.22], [141.5, -34.16], [141.0, -34.02], [141.0, -29.0], [148.96, -29.0], [149.5, -28.57], [149.7, -28.63], [150.29, -28.54], [150.45, -28.67], [150.75, -28.63], [151.01, -28.74], [151.05, -28.84], [151.27, -28.94], [151.28, -29.1], [151.39, -29.18], [151.55, -28.95], [151.71, -28.87], [151.78, -28.96], [152.01, -28.91], [152.08, -28.71], [151.96, -28.52], [152.39, -28.37], [152.46, -28.26], [152.58, -28.34], [152.61, -28.27], [152.75, -28.36], [152.88, -28.31], [153.11, -28.36], [153.18, -28.25], [153.56, -28.17], [153.61, -28.84], [153.53, -28.87], [153.59, -28.88], [153.34, -29.3], [153.33, -29.67], [152.99, -30.73], [153.09, -30.91], [153.06, -31.06], [152.75, -31.85], [152.51, -32.12], [152.54, -32.44], [152.34, -32.53], [152.21, -32.7], [151.94, -32.68], [151.94, -32.74], [152.19, -32.71], [152.17, -32.76], [151.79, -32.92], [151.73, -32.88], [151.79, -32.93], [151.8, -32.92], [151.58, -33.28], [151.5, -33.34], [151.56, -33.24], [151.51, -33.22], [151.44, -33.31], [151.5, -33.36], [151.42, -33.52], [151.26, -33.57], [151.27, -33.48], [151.19, -33.49], [151.2, -33.53], [151.23, -33.54], [151.25, -33.58], [151.15, -33.66], [151.29, -33.57], [151.31, -33.67], [151.34, -33.58], [151.3, -33.82], [151.2, -33.77], [151.25, -33.85], [151.05, -33.82], [151.15, -33.87], [151.28, -33.85], [151.25, -34.0], [151.03, -33.98]], [[153.55, -28.19], [153.51, -28.19], [153.49, -28.22], [153.55, -28.19]], [[153.55, -28.2], [153.54, -28.24], [153.55, -28.24], [153.55, -28.2]], [[151.22, -33.54], [151.23, -33.55], [151.23, -33.54], [151.22, -33.54]], [[151.19, -33.53], [151.17, -33.43], [151.07, -33.45], [151.16, -33.47], [151.12, -33.6], [151.19, -33.53]], [[151.64, -33.07], [151.62, -32.96], [151.61, -33.08], [151.51, -33.14], [151.57, -33.18], [151.58, -33.1], [151.6, -33.16], [151.64, -33.07]], [[151.69, -32.82], [151.78, -32.88], [151.82, -32.83], [151.69, -32.82]], [[151.7, -32.85], [151.71, -32.87], [151.73, -32.88], [151.7, -32.85]], [[151.59, -33.21], [151.56, -33.21], [151.55, -33.23], [151.59, -33.21]], [[151.33, -33.5], [151.37, -33.44], [151.32, -33.45], [151.33, -33.5]], [[151.31, -33.7], [151.28, -33.71], [151.27, -33.71], [151.31, -33.7]], [[149.4, -35.32], [149.12, -35.12], [148.81, -35.31], [148.77, -35.65], [148.86, -35.76], [148.89, -35.72], [148.91, -35.85], [149.05, -35.92], [149.15, -35.41], [149.4, -35.32]]], [[[152.33, -32.62], [152.31, -32.63], [152.31, -32.61], [152.33, -32.62]]]] } }, { "type": "Feature", "properties": { "code": "Vic", "name": "Victoria" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[145.23, -38.41], [144.89, -38.5], [144.65, -38.3], [144.92, -38.35], [145.12, -38.15], [145.1, -38.03], [144.9, -37.84], [144.51, -38.09], [144.36, -38.11], [144.48, -38.16], [144.69, -38.12], [144.63, -38.27], [144.67, -38.27], [144.33, -38.32], [143.51, -38.86], [142.37, -38.35], [142.15, -38.39], [141.74, -38.25], [141.6, -38.31], [141.63, -38.41], [141.37, -38.39], [141.3, -38.22], [140.97, -38.06], [140.96, -33.98], [141.02, -34.06], [141.49, -34.15], [141.51, -34.22], [141.68, -34.1], [142.04, -34.1], [142.22, -34.18], [142.24, -34.31], [142.4, -34.34], [142.37, -34.53], [142.47, -34.56], [142.52, -34.76], [142.64, -34.78], [142.79, -34.55], [142.88, -34.67], [143.11, -34.68], [143.35, -34.79], [143.32, -35.04], [143.39, -35.19], [143.57, -35.21], [143.62, -35.39], [143.97, -35.5], [144.73, -36.12], [144.98, -36.07], [144.92, -35.99], [144.99, -35.85], [145.54, -35.8], [145.81, -35.99], [146.37, -36.05], [146.5, -35.96], [146.94, -36.12], [147.05, -36.11], [147.12, -35.99], [147.32, -36.06], [147.4, -35.94], [147.91, -36.0], [148.04, -36.14], [148.04, -36.39], [148.22, -36.6], [148.1, -36.79], [149.98, -37.51], [149.78, -37.56], [149.48, -37.78], [148.29, -37.81], [147.79, -37.96], [146.88, -38.63], [146.93, -38.59], [146.58, -38.7], [146.21, -38.69], [146.29, -38.9], [146.48, -38.79], [146.43, -39.13], [146.35, -39.13], [146.13, -38.84], [146.03, -38.81], [145.92, -38.91], [145.77, -38.67], [145.61, -38.68], [145.37, -38.54], [145.42, -38.41], [145.55, -38.37], [145.49, -38.23], [145.25, -38.22], [145.18, -38.37], [145.23, -38.41]], [[146.84, -38.62], [146.79, -38.63], [146.79, -38.63], [146.84, -38.62]]], [[[146.83, -38.68], [146.75, -38.69], [146.79, -38.68], [146.83, -38.68]]], [[[146.74, -38.67], [146.72, -38.68], [146.71, -38.68], [146.74, -38.67]]], [[[146.68, -38.71], [146.6, -38.73], [146.59, -38.72], [146.68, -38.71]]], [[[146.67, -38.72], [146.65, -38.73], [146.63, -38.72], [146.67, -38.72]]], [[[146.62, -38.76], [146.55, -38.79], [146.49, -38.77], [146.46, -38.74], [146.62, -38.76]]], [[[146.5, -38.72], [146.44, -38.73], [146.47, -38.72], [146.5, -38.72]]], [[[145.5, -38.35], [145.35, -38.42], [145.27, -38.4], [145.3, -38.28], [145.5, -38.35]]], [[[145.36, -38.55], [145.27, -38.5], [145.12, -38.52], [145.29, -38.45], [145.36, -38.55]]], [[[144.7, -38.24], [144.67, -38.26], [144.66, -38.25], [144.7, -38.24]]], [[[142.01, -38.41], [142.0, -38.43], [141.99, -38.42], [142.01, -38.41]]]] } }, { "type": "Feature", "properties": { "code": "Qld", "name": "Queensland" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[141.66, -15.0], [141.53, -14.49], [141.6, -14.1], [141.47, -13.86], [141.52, -13.57], [141.7, -13.27], [141.58, -13.0], [141.89, -12.59], [141.71, -12.52], [141.59, -12.56], [141.85, -11.98], [141.91, -11.96], [141.92, -12.17], [142.01, -12.04], [141.94, -11.95], [142.12, -11.37], [142.13, -10.95], [142.32, -10.92], [142.44, -10.71], [142.53, -10.69], [142.61, -10.75], [142.48, -10.98], [142.59, -10.88], [142.79, -11.07], [142.87, -11.38], [142.86, -11.85], [143.24, -11.97], [143.08, -12.16], [143.08, -12.34], [143.27, -12.39], [143.27, -12.51], [143.44, -12.61], [143.35, -12.9], [143.54, -12.84], [143.52, -13.26], [143.6, -13.42], [143.53, -13.75], [143.78, -14.4], [144.03, -14.48], [144.2, -14.26], [144.34, -14.31], [144.52, -14.17], [144.69, -14.57], [144.91, -14.61], [144.96, -14.74], [145.35, -14.95], [145.23, -15.14], [145.26, -15.25], [145.36, -15.28], [145.24, -15.46], [145.32, -15.57], [145.36, -15.91], [145.48, -16.08], [145.41, -16.46], [145.78, -16.94], [145.85, -16.87], [145.96, -16.9], [145.89, -17.06], [146.07, -17.39], [146.03, -17.55], [146.07, -17.51], [146.15, -17.65], [146.02, -18.25], [146.19, -18.47], [146.34, -18.53], [146.29, -18.89], [146.45, -19.07], [146.77, -19.18], [146.88, -19.3], [146.96, -19.31], [147.02, -19.18], [147.13, -19.42], [147.44, -19.42], [147.42, -19.32], [147.67, -19.83], [147.78, -19.82], [147.75, -19.71], [147.82, -19.71], [147.92, -19.91], [148.08, -19.88], [148.26, -19.98], [148.23, -20.05], [148.35, -20.16], [148.47, -20.14], [148.45, -20.06], [148.56, -20.07], [148.58, -20.2], [148.68, -20.18], [148.67, -20.28], [148.77, -20.24], [148.93, -20.53], [148.76, -20.42], [148.76, -20.48], [148.68, -20.44], [148.66, -20.59], [148.84, -20.88], [149.05, -20.9], [149.01, -20.99], [149.23, -21.06], [149.22, -21.15], [149.22, -21.12], [149.16, -21.13], [149.15, -21.14], [149.22, -21.15], [149.18, -21.28], [149.3, -21.27], [149.29, -21.51], [149.4, -21.49], [149.44, -21.59], [149.48, -21.53], [149.42, -21.77], [149.47, -21.93], [149.6, -22.28], [149.77, -22.37], [149.75, -22.44], [149.81, -22.38], [150.05, -22.66], [149.91, -22.34], [150.04, -22.13], [150.18, -22.36], [150.55, -22.62], [150.56, -22.32], [150.65, -22.35], [150.63, -22.44], [150.67, -22.35], [150.75, -22.45], [150.72, -22.52], [150.64, -22.47], [150.71, -22.64], [150.78, -22.53], [150.84, -22.68], [150.75, -23.13], [150.83, -23.24], [150.77, -23.3], [150.87, -23.48], [150.79, -23.51], [150.88, -23.55], [150.86, -23.62], [150.93, -23.54], [150.93, -23.62], [151.02, -23.57], [150.98, -23.49], [151.06, -23.45], [151.19, -23.53], [151.24, -23.48], [151.32, -23.76], [151.22, -23.8], [151.12, -23.68], [151.17, -23.82], [151.32, -23.85], [151.44, -24.08], [151.49, -24.07], [151.44, -23.99], [151.54, -24.03], [151.55, -24.11], [151.57, -24.04], [151.68, -24.1], [151.61, -23.98], [151.73, -24.02], [151.72, -24.09], [151.76, -24.02], [152.04, -24.53], [152.47, -24.82], [152.53, -25.09], [152.63, -25.15], [152.56, -25.18], [152.91, -25.29], [152.92, -25.43], [152.86, -25.47], [152.96, -25.43], [152.96, -25.49], [152.86, -25.55], [152.88, -25.68], [153.02, -25.83], [153.01, -25.99], [153.05, -25.81], [153.19, -25.93], [153.06, -26.31], [153.21, -27.08], [153.08, -26.97], [153.13, -26.83], [153.02, -26.99], [153.14, -27.08], [153.02, -27.12], [153.16, -27.38], [153.05, -27.46], [153.19, -27.37], [153.19, -27.48], [153.32, -27.58], [153.3, -27.71], [153.36, -27.71], [153.44, -27.39], [153.55, -27.43], [153.37, -27.8], [153.45, -28.08], [153.55, -28.16], [153.18, -28.25], [153.11, -28.36], [152.88, -28.31], [152.75, -28.36], [152.61, -28.27], [152.58, -28.34], [152.46, -28.26], [152.39, -28.37], [151.96, -28.52], [152.08, -28.71], [152.01, -28.91], [151.78, -28.96], [151.71, -28.87], [151.55, -28.95], [151.39, -29.18], [151.28, -29.1], [151.27, -28.94], [151.05, -28.84], [151.01, -28.74], [150.75, -28.63], [150.45, -28.67], [150.29, -28.54], [149.7, -28.63], [149.5, -28.57], [148.96, -29.0], [141.0, -29.0], [141.0, -26.0], [138.0, -26.0], [138.0, -16.54], [138.32, -16.75], [138.63, -16.77], [139.04, -16.91], [139.16, -17.03], [139.24, -17.32], [140.0, -17.71], [140.59, -17.6], [140.89, -17.38], [140.96, -17.0], [141.3, -16.5], [141.43, -16.07], [141.37, -15.92], [141.43, -15.66], [141.66, -15.0]], [[152.56, -25.18], [152.54, -25.19], [152.55, -25.2], [152.56, -25.18]], [[151.05, -23.62], [151.04, -23.64], [151.1, -23.66], [151.05, -23.62]], [[153.38, -27.86], [153.37, -27.85], [153.36, -27.85], [153.38, -27.86]], [[153.38, -27.88], [153.34, -27.89], [153.35, -27.92], [153.38, -27.88]], [[153.01, -27.51], [153.0, -27.51], [153.01, -27.52], [153.01, -27.51]], [[153.03, -27.47], [153.02, -27.49], [153.0, -27.49], [153.03, -27.47]], [[152.91, -27.6], [152.91, -27.6], [152.91, -27.56], [152.91, -27.6]], [[152.92, -27.54], [152.97, -27.54], [152.97, -27.51], [152.97, -27.54], [152.92, -27.54]]], [[[153.47, -27.03], [153.42, -27.2], [153.43, -27.36], [153.36, -27.06], [153.47, -27.03]]], [[[153.43, -27.92], [153.41, -27.83], [153.45, -27.76], [153.43, -27.92]]], [[[153.38, -27.62], [153.35, -27.62], [153.36, -27.58], [153.38, -27.62]]], [[[153.37, -27.5], [153.35, -27.51], [153.34, -27.5], [153.37, -27.5]]], [[[152.95, -25.57], [153.05, -25.35], [152.99, -25.22], [153.22, -25.0], [153.12, -24.82], [153.26, -24.7], [153.27, -24.89], [153.36, -25.01], [153.11, -25.56], [153.08, -25.79], [152.95, -25.57]]], [[[153.34, -27.69], [153.33, -27.69], [153.32, -27.68], [153.34, -27.69]]], [[[153.34, -27.57], [153.34, -27.57], [153.32, -27.57], [153.34, -27.57]]], [[[152.99, -25.33], [152.96, -25.3], [152.94, -25.27], [152.99, -25.33]]], [[[151.39, -23.86], [151.37, -23.87], [151.33, -23.75], [151.39, -23.86]]], [[[150.98, -23.15], [150.94, -23.2], [150.93, -23.18], [150.98, -23.15]]], [[[150.91, -23.08], [150.89, -23.08], [150.89, -23.05], [150.91, -23.08]]], [[[150.87, -23.51], [150.86, -23.52], [150.85, -23.51], [150.87, -23.51]]], [[[150.87, -23.53], [150.85, -23.53], [150.84, -23.52], [150.87, -23.53]]], [[[150.7, -21.95], [150.69, -21.97], [150.68, -21.97], [150.7, -21.95]]], [[[150.56, -22.29], [150.48, -22.35], [150.48, -22.21], [150.56, -22.29]]], [[[150.47, -22.25], [150.42, -22.3], [150.44, -22.23], [150.47, -22.25]]], [[[150.36, -21.72], [150.33, -21.77], [150.3, -21.75], [150.36, -21.72]]], [[[150.35, -21.67], [150.34, -21.67], [150.33, -21.66], [150.35, -21.67]]], [[[150.32, -22.24], [150.3, -22.25], [150.3, -22.24], [150.32, -22.24]]], [[[150.3, -21.66], [150.24, -21.68], [150.25, -21.62], [150.3, -21.66]]], [[[150.28, -22.35], [150.26, -22.36], [150.25, -22.36], [150.28, -22.35]]], [[[150.28, -21.52], [150.26, -21.53], [150.25, -21.52], [150.28, -21.52]]], [[[150.19, -21.98], [150.17, -22.0], [150.15, -21.97], [150.19, -21.98]]], [[[150.01, -22.1], [149.95, -22.17], [149.93, -22.15], [150.01, -22.1]]], [[[149.9, -22.05], [149.91, -22.22], [149.87, -22.23], [149.9, -22.05]]], [[[149.88, -21.99], [149.86, -22.01], [149.84, -22.0], [149.88, -21.99]]], [[[149.82, -21.61], [149.78, -21.61], [149.79, -21.61], [149.82, -21.61]]], [[[149.69, -21.32], [149.69, -21.33], [149.66, -21.31], [149.69, -21.32]]], [[[149.6, -20.85], [149.6, -20.89], [149.58, -20.87], [149.6, -20.85]]], [[[149.58, -21.97], [149.57, -21.99], [149.56, -21.99], [149.58, -21.97]]], [[[149.5, -21.83], [149.49, -21.84], [149.47, -21.82], [149.5, -21.83]]], [[[149.46, -20.91], [149.43, -20.95], [149.43, -20.91], [149.46, -20.91]]], [[[149.42, -20.92], [149.41, -20.92], [149.39, -20.9], [149.42, -20.92]]], [[[149.41, -20.77], [149.4, -20.78], [149.39, -20.77], [149.41, -20.77]]], [[[149.3, -20.8], [149.28, -20.79], [149.27, -20.78], [149.3, -20.8]]], [[[149.29, -20.81], [149.27, -20.81], [149.25, -20.81], [149.29, -20.81]]], [[[149.19, -20.67], [149.19, -20.69], [149.17, -20.67], [149.19, -20.67]]], [[[149.15, -20.66], [149.14, -20.69], [149.14, -20.69], [149.15, -20.66]]], [[[149.12, -20.54], [149.11, -20.55], [149.1, -20.55], [149.12, -20.54]]], [[[149.08, -20.44], [149.07, -20.53], [149.04, -20.5], [149.08, -20.44]]], [[[149.1, -20.25], [149.08, -20.29], [149.07, -20.29], [149.1, -20.25]]], [[[149.09, -20.66], [149.07, -20.64], [149.06, -20.62], [149.09, -20.66]]], [[[149.06, -20.45], [149.03, -20.46], [149.02, -20.44], [149.06, -20.45]]], [[[149.06, -20.29], [148.91, -20.29], [148.96, -20.16], [148.99, -20.25], [149.06, -20.29]]], [[[149.04, -20.16], [149.04, -20.18], [149.02, -20.16], [149.04, -20.16]]], [[[148.98, -20.35], [148.94, -20.36], [148.95, -20.33], [148.98, -20.35]]], [[[148.97, -20.07], [148.95, -20.16], [148.89, -20.17], [148.91, -20.07], [148.97, -20.07]]], [[[148.92, -20.85], [148.9, -20.85], [148.89, -20.83], [148.92, -20.85]]], [[[148.88, -20.39], [148.85, -20.38], [148.84, -20.34], [148.88, -20.39]]], [[[148.85, -20.26], [148.84, -20.28], [148.83, -20.29], [148.85, -20.26]]], [[[148.45, -19.97], [148.47, -20.05], [148.44, -20.04], [148.45, -19.97]]], [[[146.88, -19.11], [146.85, -19.18], [146.78, -19.13], [146.88, -19.11]]], [[[146.69, -18.76], [146.57, -18.76], [146.57, -18.68], [146.64, -18.75], [146.69, -18.76]]], [[[146.57, -18.67], [146.56, -18.69], [146.54, -18.66], [146.57, -18.67]]], [[[146.53, -18.67], [146.52, -18.68], [146.51, -18.66], [146.53, -18.67]]], [[[146.49, -18.6], [146.51, -18.62], [146.49, -18.67], [146.49, -18.6]]], [[[146.24, -18.28], [146.22, -18.19], [146.31, -18.24], [146.32, -18.49], [146.22, -18.48], [146.19, -18.37], [146.07, -18.25], [146.24, -18.28]]], [[[146.18, -18.4], [146.19, -18.43], [146.15, -18.36], [146.18, -18.4]]], [[[146.16, -18.15], [146.18, -18.18], [146.15, -18.18], [146.16, -18.15]]], [[[145.48, -14.67], [145.45, -14.68], [145.45, -14.65], [145.48, -14.67]]], [[[144.99, -14.5], [144.98, -14.51], [144.95, -14.5], [144.99, -14.5]]], [[[144.27, -14.16], [144.24, -14.19], [144.23, -14.18], [144.27, -14.16]]], [[[144.28, -14.23], [144.27, -14.24], [144.25, -14.22], [144.28, -14.23]]], [[[144.23, -14.13], [144.25, -14.15], [144.21, -14.18], [144.23, -14.13]]], [[[144.06, -9.91], [144.06, -9.92], [144.04, -9.92], [144.06, -9.91]]], [[[143.78, -9.58], [143.76, -9.6], [143.76, -9.58], [143.78, -9.58]]], [[[143.5, -12.53], [143.48, -12.52], [143.45, -12.5], [143.5, -12.53]]], [[[142.95, -9.85], [142.91, -9.87], [142.9, -9.85], [142.95, -9.85]]], [[[142.87, -10.04], [142.86, -10.05], [142.83, -10.02], [142.87, -10.04]]], [[[142.65, -9.36], [142.8, -9.38], [142.6, -9.4], [142.65, -9.36]]], [[[142.69, -10.92], [142.67, -10.94], [142.65, -10.91], [142.69, -10.92]]], [[[142.67, -10.63], [142.65, -10.64], [142.63, -10.63], [142.67, -10.63]]], [[[142.65, -9.76], [142.65, -9.77], [142.62, -9.77], [142.65, -9.76]]], [[[142.62, -10.74], [142.61, -10.75], [142.58, -10.71], [142.62, -10.74]]], [[[142.55, -9.42], [142.53, -9.44], [142.53, -9.41], [142.55, -9.42]]], [[[142.34, -10.17], [142.28, -10.26], [142.18, -10.19], [142.27, -10.12], [142.34, -10.17]]], [[[142.31, -10.57], [142.27, -10.64], [142.24, -10.61], [142.31, -10.57]]], [[[142.31, -10.51], [142.3, -10.54], [142.28, -10.53], [142.31, -10.51]]], [[[142.32, -9.57], [142.28, -9.57], [142.26, -9.55], [142.32, -9.57]]], [[[142.3, -10.72], [142.29, -10.73], [142.28, -10.72], [142.3, -10.72]]], [[[142.29, -9.26], [142.25, -9.29], [142.13, -9.26], [142.22, -9.23], [142.29, -9.26]]], [[[142.28, -10.71], [142.18, -10.77], [142.11, -10.69], [142.2, -10.59], [142.28, -10.71]]], [[[142.23, -10.57], [142.21, -10.59], [142.21, -10.58], [142.23, -10.57]]], [[[142.23, -10.53], [142.18, -10.57], [142.18, -10.55], [142.23, -10.53]]], [[[142.2, -9.95], [142.18, -9.97], [142.16, -9.95], [142.2, -9.95]]], [[[142.18, -10.06], [142.16, -10.18], [142.09, -10.11], [142.18, -10.06]]], [[[142.18, -10.59], [142.17, -10.61], [142.15, -10.6], [142.18, -10.59]]], [[[142.17, -10.55], [142.16, -10.57], [142.15, -10.57], [142.17, -10.55]]], [[[139.89, -16.65], [139.86, -16.68], [139.85, -16.66], [139.89, -16.65]]], [[[139.73, -16.45], [139.71, -16.49], [139.7, -16.47], [139.73, -16.45]]], [[[139.71, -16.53], [139.6, -16.55], [139.57, -16.47], [139.55, -16.46], [139.45, -16.67], [139.27, -16.73], [139.15, -16.63], [139.3, -16.46], [139.55, -16.39], [139.71, -16.53]]], [[[139.64, -17.07], [139.6, -17.13], [139.6, -17.11], [139.64, -17.07]]], [[[139.58, -17.09], [139.39, -17.08], [139.49, -16.98], [139.58, -17.09]]], [[[139.48, -16.68], [139.44, -16.7], [139.44, -16.69], [139.48, -16.68]]], [[[139.27, -17.06], [139.21, -17.04], [139.21, -17.0], [139.27, -17.06]]], [[[139.15, -16.69], [139.16, -16.75], [139.14, -16.75], [139.15, -16.69]]], [[[139.13, -16.8], [139.09, -16.84], [139.09, -16.83], [139.13, -16.8]]]] } }, { "type": "Feature", "properties": { "code": "SA", "name": "South Australia" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[133.45, -32.18], [133.13, -32.21], [132.75, -31.95], [132.2, -32.03], [131.76, -31.72], [131.15, -31.46], [130.81, -31.61], [130.15, -31.58], [129.0, -31.69], [129.0, -26.0], [141.0, -26.0], [140.97, -38.06], [140.66, -38.06], [140.4, -37.92], [140.12, -37.53], [139.99, -37.49], [139.74, -37.18], [139.8, -37.14], [139.67, -36.96], [139.84, -36.84], [139.85, -36.65], [139.38, -35.89], [138.76, -35.52], [138.52, -35.64], [138.1, -35.63], [138.44, -35.35], [138.52, -35.03], [138.48, -34.78], [138.5, -34.84], [138.57, -34.83], [138.54, -34.75], [138.27, -34.48], [138.1, -34.14], [137.89, -34.51], [137.76, -35.11], [137.64, -35.17], [137.42, -35.1], [137.17, -35.24], [136.82, -35.25], [137.01, -34.89], [137.45, -34.91], [137.51, -34.62], [137.48, -34.44], [137.42, -34.46], [137.5, -34.23], [137.45, -34.14], [137.52, -34.13], [137.6, -33.88], [137.98, -33.56], [137.81, -33.27], [138.05, -33.12], [137.95, -33.01], [137.94, -32.76], [137.84, -32.7], [137.75, -32.42], [137.79, -33.0], [137.64, -32.96], [137.45, -33.13], [137.21, -33.66], [136.59, -33.9], [136.11, -34.36], [136.09, -34.54], [136.06, -34.48], [135.93, -34.53], [135.94, -34.65], [135.85, -34.67], [135.89, -34.75], [135.79, -34.81], [136.01, -34.74], [135.95, -35.01], [135.79, -34.86], [135.62, -34.94], [135.25, -34.55], [135.11, -34.59], [135.21, -34.43], [135.22, -34.5], [135.35, -34.52], [135.3, -34.55], [135.37, -34.64], [135.52, -34.61], [135.43, -34.6], [135.41, -34.51], [135.39, -34.6], [135.18, -33.88], [134.83, -33.63], [134.8, -33.33], [134.66, -33.23], [134.72, -33.2], [134.56, -33.16], [134.63, -33.25], [134.45, -33.14], [134.26, -33.15], [134.23, -33.04], [134.14, -33.02], [134.19, -32.94], [134.06, -32.91], [134.14, -32.84], [134.06, -32.72], [134.17, -32.72], [134.2, -32.73], [134.15, -32.72], [134.2, -32.8], [134.29, -32.69], [134.21, -32.51], [134.06, -32.44], [133.85, -32.54], [133.87, -32.4], [133.95, -32.39], [133.82, -32.23], [133.68, -32.2], [133.61, -32.09], [133.55, -32.17], [133.47, -32.1], [133.39, -32.16], [133.45, -32.18]], [[134.35, -33.14], [134.28, -33.03], [134.28, -33.02], [134.27, -33.09], [134.35, -33.14]]], [[[133.49, -32.2], [133.49, -32.2], [133.49, -32.21], [133.49, -32.2]]], [[[138.55, -34.8], [138.52, -34.81], [138.51, -34.76], [138.55, -34.8]]], [[[138.13, -35.84], [138.04, -35.9], [137.74, -35.85], [137.46, -36.07], [137.21, -35.97], [136.71, -36.06], [136.53, -35.88], [136.59, -35.75], [137.62, -35.56], [137.58, -35.73], [137.78, -35.72], [137.75, -35.84], [137.94, -35.72], [138.13, -35.84]]], [[[137.38, -34.5], [137.34, -34.53], [137.36, -34.46], [137.38, -34.5]]], [[[136.49, -35.17], [136.45, -35.17], [136.44, -35.15], [136.49, -35.17]]], [[[136.36, -34.66], [136.34, -34.68], [136.33, -34.66], [136.36, -34.66]]], [[[136.31, -34.51], [136.27, -34.55], [136.27, -34.54], [136.31, -34.51]]], [[[136.11, -34.93], [136.16, -35.06], [136.08, -34.95], [136.11, -34.93]]], [[[135.94, -34.69], [135.93, -34.73], [135.92, -34.68], [135.94, -34.69]]], [[[134.81, -33.59], [134.81, -33.61], [134.78, -33.6], [134.81, -33.59]]], [[[134.55, -33.72], [134.5, -33.75], [134.45, -33.77], [134.47, -33.69], [134.55, -33.72]]], [[[133.67, -32.23], [133.6, -32.31], [133.55, -32.31], [133.54, -32.28], [133.67, -32.23]]], [[[133.65, -32.45], [133.64, -32.46], [133.63, -32.46], [133.65, -32.45]]], [[[133.31, -32.51], [133.28, -32.51], [133.27, -32.5], [133.31, -32.51]]], [[[133.3, -32.56], [133.29, -32.57], [133.28, -32.57], [133.3, -32.56]]]] } }, { "type": "Feature", "properties": { "code": "WA", "name": "Western Australia" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[113.39, -26.39], [113.35, -26.3], [113.34, -26.3], [113.36, -26.02], [113.51, -26.36], [113.49, -26.48], [113.54, -26.28], [113.6, -26.61], [113.63, -26.46], [113.66, -26.67], [113.88, -26.51], [113.88, -26.34], [113.69, -26.22], [113.58, -26.1], [113.41, -25.72], [113.51, -25.5], [113.76, -25.88], [113.7, -26.2], [113.81, -26.18], [113.88, -25.95], [113.97, -26.34], [114.08, -26.47], [114.24, -26.31], [114.19, -25.98], [114.27, -25.98], [114.27, -25.89], [114.0, -25.62], [113.82, -25.17], [113.67, -25.02], [113.71, -24.85], [113.62, -24.86], [113.62, -24.75], [113.41, -24.48], [113.39, -24.22], [113.47, -23.9], [113.78, -23.48], [113.76, -23.12], [113.83, -22.96], [113.65, -22.58], [114.02, -21.85], [114.19, -21.81], [114.08, -22.15], [114.12, -22.33], [114.18, -22.31], [114.12, -22.42], [114.14, -22.54], [114.28, -22.43], [114.34, -22.52], [114.65, -21.84], [114.91, -21.69], [115.48, -21.53], [115.62, -21.35], [115.83, -21.25], [115.92, -21.08], [116.15, -21.01], [116.2, -20.83], [116.46, -20.84], [116.64, -20.67], [116.6, -20.73], [116.66, -20.74], [116.81, -20.53], [116.87, -20.53], [116.83, -20.71], [116.92, -20.74], [117.18, -20.59], [117.17, -20.7], [117.38, -20.78], [117.63, -20.66], [117.66, -20.72], [117.81, -20.67], [117.97, -20.54], [117.94, -20.48], [118.18, -20.34], [118.2, -20.4], [118.85, -20.29], [119.1, -19.96], [119.57, -20.08], [119.76, -19.96], [120.2, -19.91], [121.11, -19.54], [121.51, -19.09], [121.65, -18.82], [121.62, -18.71], [121.79, -18.66], [121.73, -18.58], [121.82, -18.45], [121.9, -18.46], [122.37, -18.12], [122.38, -17.99], [122.18, -17.97], [122.17, -17.26], [122.32, -17.16], [122.25, -17.12], [122.37, -17.0], [122.48, -16.98], [122.48, -16.89], [122.61, -16.97], [122.53, -16.84], [122.58, -16.76], [122.85, -16.79], [122.74, -16.68], [122.93, -16.39], [123.04, -16.36], [123.08, -16.44], [122.98, -16.47], [122.95, -16.58], [123.14, -16.69], [123.15, -16.92], [123.26, -17.01], [123.39, -17.32], [123.58, -17.58], [123.65, -17.18], [123.58, -17.03], [123.65, -17.0], [123.91, -17.21], [123.8, -17.0], [123.96, -16.85], [123.8, -16.91], [123.71, -16.75], [123.5, -16.66], [123.62, -16.55], [123.53, -16.54], [123.51, -16.6], [123.43, -16.5], [123.64, -16.53], [123.58, -16.5], [123.65, -16.47], [123.51, -16.38], [123.67, -16.44], [123.7, -16.41], [123.63, -16.36], [123.72, -16.37], [123.55, -16.28], [123.62, -16.26], [123.56, -16.18], [123.77, -16.17], [123.81, -16.22], [123.74, -16.26], [123.87, -16.33], [123.87, -16.45], [123.88, -16.3], [123.99, -16.37], [123.91, -16.21], [124.18, -16.31], [124.2, -16.4], [124.39, -16.45], [124.41, -16.54], [124.47, -16.5], [124.39, -16.42], [124.34, -16.42], [124.39, -16.35], [124.45, -16.41], [124.84, -16.43], [124.92, -16.42], [124.95, -16.39], [124.81, -16.42], [124.69, -16.34], [124.39, -16.34], [124.44, -16.07], [124.51, -16.21], [124.65, -16.1], [124.59, -16.12], [124.61, -15.9], [124.74, -15.82], [124.7, -15.74], [124.63, -15.78], [124.5, -16.0], [124.48, -15.82], [124.42, -15.88], [124.37, -15.67], [124.48, -15.62], [124.4, -15.62], [124.42, -15.55], [124.52, -15.47], [124.63, -15.53], [124.74, -15.36], [124.66, -15.35], [124.71, -15.25], [124.75, -15.35], [124.86, -15.29], [125.02, -15.54], [125.09, -15.46], [125.42, -15.7], [125.07, -15.44], [125.16, -15.33], [125.09, -15.34], [125.12, -15.26], [124.9, -15.34], [124.93, -15.23], [125.01, -15.24], [125.06, -15.16], [124.97, -15.16], [124.88, -15.26], [124.9, -15.17], [124.83, -15.16], [125.03, -15.11], [125.01, -14.98], [125.07, -14.98], [125.16, -15.15], [125.28, -15.1], [125.48, -15.15], [125.36, -15.11], [125.48, -15.0], [125.21, -14.97], [125.33, -14.88], [125.21, -14.86], [125.14, -14.75], [125.31, -14.65], [125.2, -14.65], [125.36, -14.51], [125.43, -14.64], [125.52, -14.5], [125.53, -14.56], [125.6, -14.56], [125.6, -14.24], [125.73, -14.28], [125.66, -14.34], [125.65, -14.65], [125.71, -14.49], [125.77, -14.48], [125.81, -14.44], [125.83, -14.59], [125.94, -14.64], [125.92, -14.54], [126.05, -14.53], [126.02, -14.41], [125.98, -14.39], [126.09, -14.35], [126.05, -14.25], [126.17, -14.15], [125.99, -14.07], [125.98, -13.99], [126.01, -14.07], [126.04, -13.98], [126.1, -14.04], [126.01, -13.93], [126.16, -13.92], [126.11, -14.03], [126.19, -13.97], [126.22, -13.97], [126.15, -14.07], [126.21, -14.08], [126.25, -14.24], [126.36, -14.19], [126.3, -14.14], [126.33, -14.05], [126.54, -13.93], [126.45, -14.08], [126.53, -14.08], [126.6, -14.24], [126.64, -14.08], [126.69, -14.13], [126.76, -14.05], [126.71, -13.97], [126.73, -14.0], [126.75, -13.97], [126.88, -14.0], [126.91, -13.99], [126.74, -13.79], [126.84, -13.82], [126.88, -13.75], [127.05, -13.81], [127.14, -13.98], [127.19, -13.9], [127.21, -13.97], [127.25, -13.9], [127.43, -13.94], [127.45, -14.06], [127.67, -14.19], [127.85, -14.48], [127.93, -14.5], [127.95, -14.59], [128.22, -14.72], [128.12, -14.86], [128.04, -15.29], [128.09, -15.39], [128.0, -15.52], [128.11, -15.43], [128.13, -15.18], [128.3, -15.42], [128.19, -15.09], [128.27, -14.98], [128.33, -15.04], [128.3, -14.94], [128.36, -15.07], [128.36, -14.89], [128.52, -15.01], [128.47, -14.89], [128.38, -14.82], [128.39, -14.8], [128.55, -14.77], [129.0, -14.88], [129.0, -31.69], [128.31, -31.98], [127.33, -32.26], [126.67, -32.31], [126.2, -32.23], [125.95, -32.29], [124.81, -32.87], [124.24, -33.02], [124.1, -33.18], [123.98, -33.56], [123.53, -33.94], [123.37, -33.9], [123.16, -34.02], [123.02, -33.86], [122.62, -33.89], [122.57, -33.96], [122.36, -33.91], [122.11, -34.02], [122.0, -33.83], [121.79, -33.91], [121.36, -33.82], [120.59, -33.89], [120.44, -33.97], [120.04, -33.92], [119.6, -34.13], [119.46, -34.29], [119.58, -34.39], [119.42, -34.37], [119.42, -34.46], [119.29, -34.45], [119.25, -34.53], [118.91, -34.46], [118.76, -34.55], [118.72, -34.66], [118.44, -34.76], [118.4, -34.92], [118.18, -34.94], [118.19, -35.02], [117.96, -35.01], [117.95, -34.94], [117.85, -35.04], [118.02, -35.11], [116.48, -35.02], [116.26, -34.88], [116.0, -34.84], [115.58, -34.42], [115.17, -34.27], [115.13, -34.38], [115.02, -34.25], [115.0, -33.53], [115.12, -33.62], [115.37, -33.64], [115.67, -33.32], [115.61, -32.67], [115.7, -32.52], [115.71, -32.52], [115.64, -32.62], [115.73, -32.78], [115.67, -32.62], [115.78, -32.6], [115.68, -32.27], [115.77, -32.19], [115.73, -32.06], [115.86, -32.05], [115.85, -31.98], [115.72, -32.05], [115.69, -31.65], [115.06, -30.51], [114.95, -30.05], [115.0, -29.49], [114.87, -29.12], [114.58, -28.78], [114.53, -28.49], [114.17, -28.11], [114.11, -27.85], [114.16, -27.71], [113.97, -27.23], [113.16, -26.15], [113.27, -26.24], [113.3, -26.02], [113.33, -26.34], [113.39, -26.39]], [[117.34, -35.02], [117.47, -35.02], [117.47, -34.98], [117.37, -34.97], [117.34, -35.02]], [[128.32, -15.48], [128.33, -15.51], [128.34, -15.5], [128.32, -15.48]], [[124.41, -15.71], [124.42, -15.72], [124.44, -15.71], [124.41, -15.71]], [[113.44, -25.71], [113.47, -25.71], [113.46, -25.7], [113.44, -25.71]], [[115.88, -31.94], [115.91, -31.95], [115.95, -31.91], [115.88, -31.94]]], [[[128.47, -14.91], [128.47, -14.93], [128.45, -14.88], [128.47, -14.91]]], [[[128.33, -14.76], [128.3, -14.75], [128.29, -14.74], [128.33, -14.76]]], [[[128.12, -15.04], [128.2, -15.19], [128.13, -15.16], [128.12, -15.04]]], [[[127.86, -14.43], [127.85, -14.48], [127.84, -14.46], [127.86, -14.43]]], [[[126.83, -13.96], [126.87, -13.96], [126.88, -13.99], [126.83, -13.96]]], [[[126.63, -13.87], [126.62, -13.88], [126.61, -13.86], [126.63, -13.87]]], [[[126.52, -13.87], [126.61, -13.91], [126.5, -13.89], [126.52, -13.87]]], [[[126.4, -13.99], [126.38, -14.01], [126.36, -13.98], [126.4, -13.99]]], [[[126.32, -13.94], [126.31, -13.96], [126.3, -13.97], [126.32, -13.94]]], [[[126.3, -13.94], [126.28, -13.95], [126.27, -13.93], [126.3, -13.94]]], [[[126.19, -13.94], [126.16, -13.96], [126.16, -13.96], [126.19, -13.94]]], [[[126.01, -14.28], [126.02, -14.35], [125.99, -14.29], [126.01, -14.28]]], [[[126.04, -14.23], [126.01, -14.25], [125.99, -14.24], [126.04, -14.23]]], [[[126.0, -14.44], [125.99, -14.45], [125.98, -14.45], [126.0, -14.44]]], [[[126.0, -14.38], [125.98, -14.39], [125.97, -14.39], [126.0, -14.38]]], [[[125.96, -14.32], [125.94, -14.39], [125.92, -14.38], [125.96, -14.32]]], [[[125.76, -14.45], [125.72, -14.48], [125.73, -14.41], [125.76, -14.45]]], [[[125.56, -14.49], [125.51, -14.45], [125.53, -14.42], [125.56, -14.49]]], [[[125.52, -14.43], [125.52, -14.43], [125.5, -14.43], [125.52, -14.43]]], [[[125.5, -14.5], [125.45, -14.5], [125.44, -14.48], [125.5, -14.5]]], [[[125.28, -14.58], [125.27, -14.59], [125.25, -14.58], [125.28, -14.58]]], [[[125.27, -14.48], [125.25, -14.47], [125.26, -14.47], [125.27, -14.48]]], [[[125.27, -14.41], [125.26, -14.42], [125.25, -14.42], [125.27, -14.41]]], [[[125.25, -15.09], [125.25, -15.1], [125.23, -15.1], [125.25, -15.09]]], [[[125.25, -14.98], [125.23, -15.0], [125.23, -14.99], [125.25, -14.98]]], [[[125.17, -15.02], [125.2, -15.12], [125.14, -15.04], [125.17, -15.02]]], [[[125.22, -14.5], [125.21, -14.61], [125.11, -14.64], [125.12, -14.49], [125.22, -14.5]]], [[[125.21, -14.95], [125.2, -14.97], [125.19, -14.96], [125.21, -14.95]]], [[[125.04, -15.33], [125.0, -15.38], [124.99, -15.36], [125.04, -15.33]]], [[[125.0, -14.52], [124.98, -14.52], [124.99, -14.48], [125.0, -14.52]]], [[[125.0, -14.44], [124.98, -14.44], [124.97, -14.44], [125.0, -14.44]]], [[[124.97, -14.4], [124.99, -14.4], [124.98, -14.42], [124.97, -14.4]]], [[[124.97, -15.04], [124.97, -15.09], [124.95, -15.1], [124.97, -15.04]]], [[[124.98, -15.34], [124.98, -15.35], [124.95, -15.36], [124.98, -15.34]]], [[[124.96, -15.04], [124.94, -15.08], [124.94, -15.07], [124.96, -15.04]]], [[[124.93, -15.01], [124.88, -14.99], [124.92, -14.92], [124.93, -15.01]]], [[[124.87, -15.02], [124.85, -15.03], [124.84, -15.02], [124.87, -15.02]]], [[[124.81, -15.23], [124.81, -15.31], [124.79, -15.29], [124.81, -15.23]]], [[[124.81, -15.22], [124.8, -15.22], [124.78, -15.22], [124.81, -15.22]]], [[[124.72, -16.38], [124.69, -16.38], [124.68, -16.37], [124.72, -16.38]]], [[[124.7, -16.36], [124.69, -16.36], [124.67, -16.36], [124.7, -16.36]]], [[[124.66, -15.79], [124.65, -15.8], [124.63, -15.8], [124.66, -15.79]]], [[[124.65, -15.4], [124.52, -15.45], [124.59, -15.37], [124.46, -15.36], [124.57, -15.25], [124.65, -15.4]]], [[[124.64, -15.28], [124.62, -15.29], [124.61, -15.28], [124.64, -15.28]]], [[[124.62, -15.43], [124.6, -15.44], [124.59, -15.44], [124.62, -15.43]]], [[[124.6, -15.91], [124.56, -15.96], [124.53, -15.97], [124.6, -15.91]]], [[[124.47, -15.91], [124.45, -15.98], [124.46, -15.96], [124.47, -15.91]]], [[[124.46, -16.36], [124.44, -16.37], [124.43, -16.37], [124.46, -16.36]]], [[[124.46, -15.3], [124.35, -15.32], [124.34, -15.31], [124.44, -15.25], [124.46, -15.3]]], [[[124.37, -15.39], [124.37, -15.4], [124.34, -15.38], [124.37, -15.39]]], [[[124.35, -15.33], [124.32, -15.36], [124.3, -15.35], [124.35, -15.33]]], [[[124.27, -15.28], [124.24, -15.32], [124.23, -15.32], [124.27, -15.28]]], [[[124.26, -16.38], [124.22, -16.38], [124.22, -16.35], [124.26, -16.38]]], [[[124.24, -15.97], [124.2, -15.96], [124.19, -15.92], [124.24, -15.97]]], [[[124.11, -16.23], [124.11, -16.26], [124.1, -16.25], [124.11, -16.23]]], [[[124.07, -16.08], [124.08, -16.1], [124.06, -16.11], [124.07, -16.08]]], [[[124.1, -16.16], [124.07, -16.15], [124.07, -16.14], [124.1, -16.16]]], [[[123.94, -16.28], [123.9, -16.26], [123.86, -16.24], [123.94, -16.28]]], [[[123.89, -16.2], [123.88, -16.2], [123.87, -16.19], [123.89, -16.2]]], [[[123.89, -16.28], [123.86, -16.27], [123.86, -16.25], [123.89, -16.28]]], [[[123.83, -16.22], [123.82, -16.27], [123.8, -16.25], [123.83, -16.22]]], [[[123.79, -16.11], [123.77, -16.16], [123.68, -16.11], [123.79, -16.11]]], [[[123.67, -16.42], [123.65, -16.42], [123.62, -16.4], [123.67, -16.42]]], [[[123.64, -16.1], [123.63, -16.11], [123.59, -16.08], [123.64, -16.1]]], [[[123.63, -16.35], [123.61, -16.34], [123.6, -16.33], [123.63, -16.35]]], [[[123.58, -16.24], [123.56, -16.24], [123.55, -16.22], [123.58, -16.24]]], [[[123.57, -16.25], [123.57, -16.26], [123.55, -16.25], [123.57, -16.25]]], [[[123.56, -16.08], [123.53, -16.09], [123.52, -16.07], [123.56, -16.08]]], [[[123.56, -34.34], [123.53, -34.38], [123.53, -34.37], [123.56, -34.34]]], [[[123.55, -16.05], [123.53, -16.05], [123.51, -16.02], [123.55, -16.05]]], [[[123.55, -16.27], [123.53, -16.28], [123.5, -16.26], [123.55, -16.27]]], [[[123.54, -16.59], [123.52, -16.6], [123.52, -16.58], [123.54, -16.59]]], [[[123.46, -16.21], [123.5, -16.25], [123.49, -16.28], [123.46, -16.21]]], [[[123.53, -16.61], [123.48, -16.63], [123.46, -16.62], [123.53, -16.61]]], [[[123.46, -16.27], [123.44, -16.28], [123.43, -16.27], [123.46, -16.27]]], [[[123.45, -16.09], [123.44, -16.11], [123.42, -16.09], [123.45, -16.09]]], [[[123.42, -17.32], [123.4, -17.32], [123.4, -17.3], [123.42, -17.32]]], [[[123.4, -16.11], [123.39, -16.13], [123.39, -16.11], [123.4, -16.11]]], [[[123.42, -16.08], [123.41, -16.08], [123.39, -16.07], [123.42, -16.08]]], [[[123.4, -16.53], [123.39, -16.53], [123.38, -16.52], [123.4, -16.53]]], [[[123.39, -16.58], [123.39, -16.6], [123.35, -16.54], [123.39, -16.58]]], [[[123.36, -16.36], [123.34, -16.36], [123.33, -16.33], [123.36, -16.36]]], [[[123.35, -16.16], [123.34, -16.17], [123.32, -16.15], [123.35, -16.16]]], [[[123.32, -16.13], [123.3, -16.14], [123.29, -16.13], [123.32, -16.13]]], [[[123.31, -16.03], [123.29, -16.05], [123.28, -16.04], [123.31, -16.03]]], [[[123.23, -16.41], [123.21, -16.42], [123.2, -16.42], [123.23, -16.41]]], [[[123.22, -34.09], [123.21, -34.12], [123.16, -34.11], [123.22, -34.09]]], [[[123.17, -16.39], [123.18, -16.43], [123.17, -16.43], [123.17, -16.39]]], [[[123.13, -16.43], [123.1, -16.44], [123.09, -16.43], [123.13, -16.43]]], [[[122.23, -34.13], [122.25, -34.15], [122.25, -34.16], [122.23, -34.13]]], [[[122.13, -16.85], [122.11, -16.86], [122.09, -16.85], [122.13, -16.85]]], [[[122.03, -33.96], [122.0, -33.97], [122.0, -33.96], [122.03, -33.96]]], [[[122.01, -34.02], [121.99, -34.04], [121.98, -34.04], [122.01, -34.02]]], [[[121.62, -34.02], [121.61, -34.04], [121.59, -34.03], [121.62, -34.02]]], [[[118.53, -20.31], [118.51, -20.32], [118.5, -20.32], [118.53, -20.31]]], [[[118.49, -34.92], [118.47, -34.94], [118.44, -34.91], [118.49, -34.92]]], [[[118.07, -35.06], [118.04, -35.07], [118.04, -35.06], [118.07, -35.06]]], [[[117.87, -20.52], [117.86, -20.53], [117.85, -20.54], [117.87, -20.52]]], [[[117.72, -20.61], [117.73, -20.65], [117.71, -20.64], [117.72, -20.61]]], [[[117.09, -20.62], [117.06, -20.64], [117.04, -20.64], [117.09, -20.62]]], [[[116.95, -20.42], [116.85, -20.38], [116.83, -20.35], [116.95, -20.42]]], [[[116.89, -20.42], [116.84, -20.52], [116.82, -20.52], [116.89, -20.42]]], [[[116.84, -20.43], [116.83, -20.46], [116.8, -20.47], [116.84, -20.43]]], [[[116.83, -20.47], [116.8, -20.52], [116.79, -20.52], [116.83, -20.47]]], [[[116.7, -20.64], [116.68, -20.66], [116.67, -20.65], [116.7, -20.64]]], [[[116.68, -20.58], [116.65, -20.62], [116.64, -20.63], [116.68, -20.58]]], [[[116.68, -20.55], [116.64, -20.61], [116.6, -20.6], [116.68, -20.55]]], [[[116.61, -20.45], [116.59, -20.5], [116.57, -20.49], [116.61, -20.45]]], [[[116.59, -20.58], [116.55, -20.62], [116.46, -20.61], [116.59, -20.58]]], [[[115.7, -32.23], [115.68, -32.24], [115.66, -32.16], [115.7, -32.23]]], [[[115.59, -20.4], [115.57, -20.4], [115.55, -20.38], [115.59, -20.4]]], [[[115.51, -31.99], [115.51, -32.01], [115.45, -32.03], [115.51, -31.99]]], [[[115.43, -20.67], [115.42, -20.86], [115.32, -20.89], [115.43, -20.67]]], [[[115.47, -21.49], [115.44, -21.53], [115.42, -21.52], [115.47, -21.49]]], [[[115.34, -20.97], [115.32, -20.97], [115.32, -20.95], [115.34, -20.97]]], [[[115.02, -21.46], [115.02, -21.47], [114.97, -21.46], [115.02, -21.46]]], [[[114.7, -21.63], [114.69, -21.62], [114.66, -21.59], [114.7, -21.63]]], [[[114.54, -22.01], [114.5, -22.01], [114.51, -21.99], [114.54, -22.01]]], [[[114.39, -21.63], [114.37, -21.65], [114.36, -21.65], [114.39, -21.63]]], [[[114.35, -21.67], [114.31, -21.71], [114.33, -21.68], [114.35, -21.67]]], [[[114.17, -22.45], [114.17, -22.47], [114.15, -22.49], [114.17, -22.45]]], [[[114.01, -28.9], [113.96, -28.99], [113.95, -28.98], [114.01, -28.9]]], [[[113.88, -25.8], [113.87, -25.87], [113.86, -25.81], [113.88, -25.8]]], [[[113.74, -28.43], [113.72, -28.45], [113.72, -28.43], [113.74, -28.43]]], [[[113.71, -28.46], [113.69, -28.49], [113.68, -28.45], [113.71, -28.46]]], [[[113.64, -24.89], [113.63, -24.89], [113.62, -24.87], [113.64, -24.89]]], [[[112.97, -25.48], [113.22, -26.16], [113.05, -25.93], [112.93, -25.64], [112.97, -25.48]]], [[[113.16, -24.75], [113.13, -24.95], [113.12, -24.99], [113.16, -24.75]]], [[[113.13, -25.06], [113.08, -25.27], [113.12, -24.99], [113.13, -25.06]]]] } }, { "type": "Feature", "properties": { "code": "Tas", "name": "Tasmania" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[148.48, -40.43], [148.35, -40.49], [148.31, -40.43], [147.98, -40.4], [148.33, -40.29], [148.48, -40.43]]], [[[144.75, -41.42], [144.61, -40.94], [144.71, -40.86], [144.73, -40.64], [144.77, -40.74], [144.98, -40.74], [145.12, -40.84], [145.26, -40.81], [145.26, -40.71], [145.32, -40.85], [145.51, -40.85], [145.84, -41.06], [145.96, -41.06], [146.25, -41.2], [146.36, -41.16], [146.35, -41.22], [146.38, -41.23], [146.37, -41.17], [146.53, -41.12], [146.61, -41.26], [146.56, -41.15], [146.77, -41.08], [146.82, -41.14], [146.76, -41.15], [146.77, -41.17], [146.92, -41.17], [146.9, -41.2], [146.95, -41.26], [146.97, -41.25], [146.97, -41.31], [147.03, -41.36], [147.02, -41.28], [146.91, -41.21], [146.97, -41.19], [146.79, -41.05], [147.02, -40.98], [147.16, -41.03], [147.28, -40.94], [147.35, -40.94], [147.4, -41.01], [147.43, -41.01], [147.67, -40.82], [147.87, -40.88], [147.94, -40.74], [148.08, -40.77], [148.35, -40.99], [148.25, -41.05], [148.25, -41.19], [148.34, -41.26], [148.24, -41.32], [148.36, -41.28], [148.25, -41.49], [148.32, -41.62], [148.3, -42.17], [148.36, -42.18], [148.31, -42.28], [148.25, -42.24], [148.3, -42.13], [148.22, -42.07], [148.16, -42.07], [148.24, -41.99], [148.09, -42.08], [148.24, -42.1], [148.12, -42.09], [148.05, -42.12], [148.01, -42.51], [147.88, -42.55], [147.96, -42.67], [147.79, -42.9], [147.53, -42.85], [147.55, -42.99], [147.52, -43.02], [147.42, -43.05], [147.39, -42.98], [147.47, -43.03], [147.49, -42.91], [147.41, -42.94], [147.26, -42.73], [147.26, -42.76], [147.2, -42.73], [147.16, -42.75], [147.32, -42.83], [147.34, -43.05], [147.28, -43.01], [147.27, -43.02], [147.26, -43.22], [147.17, -43.28], [147.08, -43.16], [147.06, -43.23], [146.98, -43.19], [147.04, -43.05], [147.03, -43.06], [146.95, -43.16], [147.1, -43.29], [146.98, -43.33], [147.06, -43.35], [147.03, -43.44], [146.92, -43.42], [147.0, -43.48], [146.9, -43.52], [146.92, -43.6], [146.71, -43.63], [146.59, -43.54], [146.22, -43.49], [146.03, -43.57], [146.0, -43.41], [145.92, -43.38], [145.99, -43.39], [145.99, -43.33], [146.14, -43.41], [146.23, -43.32], [146.0, -43.34], [145.92, -43.21], [145.93, -43.3], [145.84, -43.32], [145.68, -43.05], [145.49, -42.99], [145.37, -42.66], [145.26, -42.62], [145.3, -42.57], [145.17, -42.2], [145.46, -42.44], [145.56, -42.36], [145.48, -42.36], [145.33, -42.15], [145.22, -42.22], [145.2, -41.94], [144.91, -41.69], [145.05, -41.6], [144.92, -41.67], [144.75, -41.42]], [[145.53, -42.44], [145.61, -42.45], [145.62, -42.45], [145.53, -42.44]], [[145.47, -42.44], [145.46, -42.5], [145.47, -42.53], [145.47, -42.44]], [[146.59, -43.54], [146.58, -43.49], [146.56, -43.46], [146.55, -43.51], [146.59, -43.54]], [[148.0, -42.31], [147.94, -42.34], [147.93, -42.34], [147.96, -42.36], [148.0, -42.31]], [[147.13, -41.43], [147.07, -41.38], [147.13, -41.44], [147.13, -41.43]], [[147.6, -42.84], [147.59, -42.78], [147.43, -42.77], [147.48, -42.83], [147.6, -42.84]], [[147.53, -42.99], [147.52, -42.96], [147.51, -42.97], [147.53, -42.99]], [[147.05, -43.04], [147.03, -43.01], [147.0, -43.02], [147.05, -43.04]], [[146.15, -41.16], [146.13, -41.16], [146.12, -41.16], [146.15, -41.16]], [[145.92, -43.21], [145.94, -43.15], [145.92, -43.16], [145.92, -43.21]], [[145.66, -42.44], [145.67, -42.56], [145.71, -42.58], [145.67, -42.56], [145.66, -42.44]], [[145.43, -42.19], [145.49, -42.19], [145.5, -42.18], [145.43, -42.19]], [[145.39, -42.2], [145.41, -42.2], [145.41, -42.2], [145.39, -42.2]], [[145.25, -42.03], [145.27, -42.02], [145.25, -42.02], [145.25, -42.03]], [[145.06, -41.63], [145.08, -41.66], [145.1, -41.66], [145.06, -41.63]]], [[[148.35, -40.52], [148.34, -40.52], [148.33, -40.5], [148.35, -40.52]]], [[[148.35, -39.95], [148.32, -39.96], [148.32, -39.95], [148.35, -39.95]]], [[[148.35, -42.34], [148.24, -42.32], [148.24, -42.31], [148.3, -42.29], [148.35, -42.34]]], [[[147.96, -39.73], [148.18, -39.95], [148.29, -39.97], [148.22, -40.12], [148.29, -40.08], [148.33, -40.21], [148.05, -40.25], [148.01, -40.11], [147.86, -40.02], [147.88, -39.91], [147.75, -39.87], [147.96, -39.73]], [[147.97, -39.74], [147.97, -39.77], [147.99, -39.78], [147.97, -39.74]]], [[[148.3, -40.26], [148.31, -40.29], [148.28, -40.28], [148.3, -40.26]]], [[[148.27, -40.25], [148.23, -40.25], [148.23, -40.24], [148.27, -40.25]]], [[[148.25, -40.49], [148.2, -40.59], [148.1, -40.53], [148.25, -40.49]]], [[[148.17, -42.65], [148.08, -42.66], [148.01, -42.74], [148.07, -42.57], [148.17, -42.65]]], [[[148.13, -40.73], [148.11, -40.74], [148.09, -40.74], [148.13, -40.73]]], [[[148.03, -40.35], [147.99, -40.37], [147.98, -40.37], [148.03, -40.35]]], [[[148.01, -43.22], [147.9, -43.19], [147.86, -43.11], [147.87, -43.21], [147.79, -43.24], [147.62, -43.01], [147.68, -42.93], [147.72, -43.03], [147.86, -43.06], [147.92, -43.02], [147.85, -43.01], [147.8, -42.89], [147.97, -42.86], [148.0, -42.96], [147.93, -43.02], [148.01, -43.22]]], [[[148.01, -39.65], [147.99, -39.66], [147.96, -39.66], [148.01, -39.65]]], [[[147.95, -39.7], [147.89, -39.7], [147.89, -39.69], [147.95, -39.7]]], [[[147.94, -40.27], [147.93, -40.28], [147.91, -40.28], [147.94, -40.27]]], [[[147.91, -40.3], [147.88, -40.33], [147.84, -40.3], [147.91, -40.3]]], [[[147.79, -40.04], [147.73, -40.1], [147.76, -40.03], [147.79, -40.04]]], [[[147.64, -40.79], [147.63, -40.81], [147.62, -40.81], [147.64, -40.79]]], [[[147.2, -43.44], [147.15, -43.5], [147.09, -43.43], [147.18, -43.46], [147.18, -43.35], [147.36, -43.26], [147.38, -43.18], [147.28, -43.17], [147.35, -43.06], [147.43, -43.23], [147.32, -43.3], [147.38, -43.37], [147.29, -43.52], [147.2, -43.44]], [[147.2, -43.43], [147.23, -43.43], [147.24, -43.43], [147.2, -43.43]]], [[[147.3, -39.48], [147.35, -39.5], [147.31, -39.48], [147.3, -39.48]]], [[[147.27, -39.44], [147.29, -39.48], [147.26, -39.48], [147.27, -39.44]]], [[[147.02, -43.09], [147.01, -43.1], [147.0, -43.12], [147.02, -43.09]]], [[[146.66, -39.46], [146.64, -39.48], [146.64, -39.47], [146.66, -39.46]]], [[[146.38, -43.6], [146.35, -43.61], [146.34, -43.59], [146.38, -43.6]]], [[[145.1, -40.79], [145.05, -40.78], [145.04, -40.75], [145.1, -40.79]]], [[[144.89, -40.74], [144.93, -40.58], [145.07, -40.71], [144.89, -40.74]]], [[[144.97, -40.43], [144.9, -40.48], [144.83, -40.44], [144.89, -40.39], [144.97, -40.43]]], [[[144.79, -40.42], [144.78, -40.58], [144.76, -40.61], [144.71, -40.51], [144.79, -40.42]]], [[[144.11, -39.8], [144.11, -40.04], [143.93, -40.16], [143.84, -39.72], [143.95, -39.58], [144.11, -39.67], [144.11, -39.8]], [[144.11, -39.81], [144.09, -39.79], [144.11, -39.82], [144.11, -39.81]]]] } }, { "type": "Feature", "properties": { "code": "NT", "name": "Northern Territory" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[130.46, -12.64], [130.62, -12.77], [130.62, -12.71], [130.69, -12.75], [130.74, -12.71], [130.59, -12.68], [130.55, -12.63], [130.61, -12.61], [130.62, -12.38], [130.77, -12.44], [130.73, -12.6], [130.78, -12.56], [130.79, -12.62], [130.81, -12.54], [130.87, -12.66], [130.97, -12.63], [130.86, -12.53], [130.95, -12.54], [130.95, -12.47], [130.82, -12.41], [130.9, -12.33], [131.06, -12.35], [131.03, -12.15], [131.22, -12.24], [131.25, -12.22], [131.3, -12.04], [131.32, -12.19], [131.43, -12.28], [131.88, -12.21], [132.07, -12.3], [132.24, -12.17], [132.39, -12.24], [132.63, -12.09], [132.66, -11.89], [132.58, -11.79], [132.65, -11.72], [132.65, -11.69], [132.5, -11.68], [132.62, -11.65], [132.49, -11.48], [132.24, -11.46], [132.11, -11.54], [131.94, -11.32], [131.76, -11.32], [131.88, -11.18], [131.96, -11.25], [131.99, -11.12], [132.11, -11.21], [132.17, -11.42], [132.24, -11.34], [132.17, -11.32], [132.14, -11.12], [132.28, -11.28], [132.33, -11.12], [132.37, -11.3], [132.45, -11.22], [132.67, -11.52], [132.9, -11.43], [132.92, -11.33], [133.19, -11.73], [133.34, -11.69], [133.32, -11.77], [133.53, -11.76], [133.61, -11.84], [133.79, -11.72], [133.92, -11.74], [133.83, -11.86], [133.91, -11.93], [134.03, -11.85], [134.07, -11.94], [134.13, -11.9], [134.17, -12.11], [134.25, -11.98], [134.49, -12.08], [134.75, -11.95], [134.86, -12.13], [135.21, -12.3], [135.16, -12.23], [135.34, -12.25], [135.22, -12.19], [135.37, -12.08], [135.57, -12.1], [135.65, -12.04], [135.91, -11.95], [135.65, -12.2], [135.71, -12.31], [136.05, -12.06], [135.93, -12.22], [135.95, -12.28], [136.06, -12.24], [135.97, -12.39], [136.02, -12.49], [136.06, -12.43], [136.26, -12.46], [136.36, -12.23], [136.17, -12.16], [136.56, -11.88], [136.45, -11.99], [136.49, -12.04], [136.53, -11.99], [136.65, -12.27], [136.74, -12.27], [136.7, -12.19], [136.78, -12.16], [136.98, -12.35], [136.77, -12.56], [136.79, -12.45], [136.72, -12.46], [136.75, -12.53], [136.67, -12.59], [136.75, -12.55], [136.76, -12.58], [136.69, -12.71], [136.62, -12.69], [136.62, -12.84], [136.55, -12.74], [136.54, -12.81], [136.47, -12.78], [136.67, -13.0], [136.46, -12.98], [136.57, -13.06], [136.47, -13.25], [136.33, -13.32], [136.39, -13.23], [136.33, -13.03], [136.32, -13.16], [136.22, -13.14], [136.18, -13.28], [136.15, -13.12], [136.05, -13.31], [136.01, -13.21], [135.92, -13.27], [135.88, -13.36], [135.97, -13.4], [135.86, -13.44], [135.88, -13.71], [135.96, -13.74], [136.08, -13.66], [135.91, -13.99], [135.9, -14.19], [135.7, -14.27], [135.54, -14.56], [135.54, -14.65], [135.38, -14.73], [135.48, -14.98], [136.24, -15.42], [136.32, -15.63], [136.56, -15.75], [136.72, -15.7], [136.64, -15.77], [136.71, -15.93], [136.95, -15.94], [136.98, -15.85], [137.37, -16.13], [137.73, -16.23], [138.0, -16.54], [138.0, -26.0], [129.0, -26.0], [129.0, -14.88], [129.19, -14.99], [129.16, -15.2], [129.3, -15.04], [129.23, -15.01], [129.23, -14.84], [129.48, -14.94], [129.6, -15.11], [129.56, -15.18], [129.68, -15.14], [129.5, -14.79], [129.59, -14.89], [129.58, -14.8], [129.8, -14.86], [129.9, -14.77], [129.76, -14.82], [129.81, -14.76], [129.67, -14.76], [129.58, -14.62], [129.77, -14.54], [129.53, -14.55], [129.52, -14.47], [129.45, -14.45], [129.45, -14.51], [129.36, -14.42], [129.37, -14.34], [129.51, -14.13], [129.48, -14.05], [129.54, -14.14], [129.6, -14.01], [129.75, -13.98], [129.82, -13.5], [129.9, -13.44], [130.01, -13.53], [130.28, -13.33], [130.12, -13.16], [130.14, -12.93], [130.34, -12.89], [130.35, -12.67], [130.46, -12.64]], [[131.23, -12.27], [131.22, -12.28], [131.23, -12.29], [131.23, -12.27]], [[136.92, -12.35], [136.88, -12.37], [136.87, -12.38], [136.92, -12.35]], [[136.48, -12.04], [136.46, -12.05], [136.48, -12.05], [136.48, -12.04]]], [[[137.11, -15.77], [137.07, -15.85], [136.93, -15.73], [136.99, -15.58], [137.11, -15.77]]], [[[136.72, -13.84], [136.84, -13.75], [136.92, -13.81], [136.78, -13.93], [136.81, -14.04], [136.71, -14.17], [136.87, -14.21], [136.91, -14.14], [136.96, -14.28], [136.65, -14.3], [136.44, -14.2], [136.32, -14.25], [136.44, -14.12], [136.41, -13.83], [136.57, -13.83], [136.64, -13.78], [136.58, -13.69], [136.63, -13.72], [136.68, -13.68], [136.69, -13.65], [136.72, -13.84]]], [[[136.96, -13.63], [136.95, -13.64], [136.93, -13.64], [136.96, -13.63]]], [[[136.91, -13.66], [136.9, -13.68], [136.89, -13.68], [136.91, -13.66]]], [[[136.9, -15.59], [136.85, -15.65], [136.87, -15.51], [136.9, -15.59]]], [[[136.83, -15.56], [136.78, -15.58], [136.77, -15.58], [136.83, -15.56]]], [[[136.84, -11.66], [136.82, -11.68], [136.81, -11.67], [136.84, -11.66]]], [[[136.74, -15.65], [136.79, -15.68], [136.73, -15.76], [136.74, -15.65]]], [[[136.83, -15.73], [136.81, -15.75], [136.8, -15.74], [136.83, -15.73]]], [[[136.83, -12.13], [136.8, -12.11], [136.82, -12.07], [136.83, -12.13]]], [[[136.82, -15.6], [136.79, -15.61], [136.78, -15.61], [136.82, -15.6]]], [[[136.77, -11.03], [136.68, -11.25], [136.48, -11.46], [136.71, -11.17], [136.71, -11.05], [136.77, -11.03]]], [[[136.76, -11.0], [136.75, -11.02], [136.74, -11.01], [136.76, -11.0]]], [[[136.69, -11.82], [136.67, -11.84], [136.64, -11.84], [136.69, -11.82]]], [[[136.68, -13.66], [136.67, -13.68], [136.66, -13.68], [136.68, -13.66]]], [[[136.68, -15.61], [136.67, -15.61], [136.65, -15.61], [136.68, -15.61]]], [[[136.63, -11.74], [136.58, -11.79], [136.51, -11.8], [136.53, -11.76], [136.63, -11.74]]], [[[136.62, -15.56], [136.59, -15.65], [136.49, -15.64], [136.53, -15.53], [136.62, -15.56]]], [[[136.6, -13.66], [136.59, -13.67], [136.58, -13.67], [136.6, -13.66]]], [[[136.54, -13.77], [136.47, -13.75], [136.51, -13.7], [136.53, -13.7], [136.54, -13.77]]], [[[136.5, -11.8], [136.47, -11.9], [136.46, -11.89], [136.5, -11.8]]], [[[136.47, -11.47], [136.45, -11.53], [136.37, -11.57], [136.37, -11.53], [136.47, -11.47]]], [[[136.46, -11.9], [136.45, -11.92], [136.43, -11.92], [136.46, -11.9]]], [[[136.41, -11.86], [136.39, -11.91], [136.37, -11.9], [136.41, -11.86]]], [[[136.4, -13.71], [136.38, -13.71], [136.38, -13.69], [136.4, -13.71]]], [[[136.38, -11.58], [136.26, -11.66], [136.16, -11.69], [136.27, -11.57], [136.38, -11.58]]], [[[136.35, -13.81], [136.37, -13.84], [136.34, -13.84], [136.35, -13.81]]], [[[136.19, -12.08], [136.19, -12.0], [136.32, -11.99], [136.19, -12.08]]], [[[136.3, -13.73], [136.25, -13.85], [136.19, -13.77], [136.11, -13.82], [136.2, -13.67], [136.3, -13.73]]], [[[136.27, -13.46], [136.24, -13.46], [136.24, -13.44], [136.27, -13.46]]], [[[136.25, -13.59], [136.23, -13.6], [136.22, -13.59], [136.25, -13.59]]], [[[136.13, -13.38], [136.21, -13.45], [136.14, -13.56], [136.13, -13.38]]], [[[136.12, -12.17], [136.11, -12.2], [136.1, -12.19], [136.12, -12.17]]], [[[136.16, -11.7], [136.13, -11.73], [136.13, -11.71], [136.16, -11.7]]], [[[136.08, -13.44], [136.08, -13.47], [136.07, -13.48], [136.08, -13.44]]], [[[136.07, -12.28], [136.05, -12.31], [136.05, -12.28], [136.07, -12.28]]], [[[136.02, -11.64], [135.98, -11.71], [135.95, -11.7], [136.02, -11.64]]], [[[136.05, -12.1], [136.03, -12.16], [136.03, -12.1], [136.05, -12.1]]], [[[135.99, -11.85], [135.95, -11.9], [135.94, -11.88], [135.99, -11.85]]], [[[135.98, -11.74], [135.94, -11.76], [135.94, -11.75], [135.98, -11.74]]], [[[135.59, -11.95], [135.9, -11.81], [135.88, -11.76], [135.93, -11.78], [135.8, -11.96], [135.56, -12.07], [135.59, -11.95]]], [[[135.73, -14.83], [135.76, -14.9], [135.69, -14.9], [135.73, -14.83]]], [[[135.63, -14.5], [135.61, -14.52], [135.6, -14.49], [135.63, -14.5]]], [[[135.12, -11.93], [135.06, -11.95], [135.05, -11.94], [135.12, -11.93]]], [[[135.0, -12.09], [134.99, -12.09], [134.98, -12.07], [135.0, -12.09]]], [[[134.99, -12.04], [134.96, -12.06], [134.91, -12.02], [134.99, -12.04]]], [[[134.93, -12.09], [134.87, -12.13], [134.85, -12.04], [134.93, -12.09]]], [[[134.87, -12.03], [134.85, -12.04], [134.83, -12.02], [134.87, -12.03]]], [[[134.83, -12.04], [134.8, -12.03], [134.8, -12.02], [134.83, -12.04]]], [[[133.49, -11.51], [133.42, -11.53], [133.38, -11.54], [133.47, -11.46], [133.49, -11.51]]], [[[133.48, -11.62], [133.37, -11.68], [133.35, -11.62], [133.41, -11.58], [133.48, -11.62]]], [[[133.02, -11.07], [132.99, -11.09], [132.98, -11.04], [133.02, -11.07]]], [[[132.92, -11.14], [132.87, -11.16], [132.86, -11.15], [132.92, -11.14]]], [[[132.88, -11.05], [132.87, -11.06], [132.85, -11.06], [132.88, -11.05]]], [[[132.8, -11.39], [132.78, -11.39], [132.78, -11.38], [132.8, -11.39]]], [[[132.68, -11.19], [132.66, -11.21], [132.64, -11.21], [132.68, -11.19]]], [[[132.59, -10.99], [132.63, -11.19], [132.59, -11.36], [132.46, -11.03], [132.59, -10.99]]], [[[132.4, -12.08], [132.39, -12.14], [132.34, -12.09], [132.4, -12.08]]], [[[132.3, -11.56], [132.31, -11.6], [132.3, -11.59], [132.3, -11.56]]], [[[132.15, -11.61], [132.11, -11.62], [132.12, -11.56], [132.15, -11.61]]], [[[130.49, -11.65], [130.4, -11.17], [130.59, -11.29], [130.57, -11.4], [130.66, -11.34], [130.71, -11.51], [130.82, -11.54], [130.7, -11.39], [130.9, -11.31], [131.03, -11.37], [131.15, -11.25], [131.21, -11.34], [131.28, -11.19], [131.31, -11.27], [131.44, -11.27], [131.54, -11.45], [131.46, -11.5], [131.47, -11.61], [131.37, -11.58], [131.28, -11.74], [130.95, -11.94], [130.49, -11.65]]], [[[131.14, -12.01], [131.11, -12.02], [131.07, -12.01], [131.14, -12.01]]], [[[131.13, -12.06], [131.11, -12.08], [131.06, -12.07], [131.13, -12.06]]], [[[131.06, -12.04], [131.03, -12.06], [131.0, -12.05], [131.06, -12.04]]], [[[131.05, -12.11], [131.04, -12.13], [131.01, -12.12], [131.05, -12.11]]], [[[130.08, -11.67], [130.31, -11.73], [130.27, -11.66], [130.19, -11.64], [130.2, -11.52], [130.28, -11.54], [130.15, -11.48], [130.34, -11.32], [130.47, -11.67], [130.64, -11.76], [130.6, -11.83], [130.02, -11.8], [130.08, -11.67]]], [[[130.54, -12.7], [130.48, -12.58], [130.52, -12.56], [130.5, -12.61], [130.54, -12.7]]], [[[130.43, -12.58], [130.42, -12.59], [130.41, -12.57], [130.43, -12.58]]], [[[130.42, -12.6], [130.4, -12.6], [130.39, -12.59], [130.42, -12.6]]], [[[130.41, -12.61], [130.4, -12.62], [130.39, -12.6], [130.41, -12.61]]], [[[130.4, -12.63], [130.37, -12.64], [130.36, -12.62], [130.4, -12.63]]], [[[130.1, -13.19], [130.09, -13.21], [130.09, -13.19], [130.1, -13.19]]], [[[130.08, -13.17], [130.02, -13.18], [130.02, -13.11], [130.03, -13.15], [130.08, -13.17]]], [[[129.73, -14.8], [129.7, -14.81], [129.67, -14.78], [129.73, -14.8]]]] } }, { "type": "Feature", "properties": { "code": "ACT", "name": "Australian Capital Territory" }, "geometry": { "type": "Polygon", "coordinates": [[[149.4, -35.32], [149.15, -35.41], [149.1, -35.85], [149.05, -35.92], [148.96, -35.9], [148.89, -35.72], [148.79, -35.7], [148.81, -35.31], [149.12, -35.12], [149.4, -35.32]], [[149.15, -35.3], [149.08, -35.3], [149.07, -35.3], [149.15, -35.3]]] } }] };
+
+// ======================== GLOBAL STATE ========================
+let fullData = [];
+let years = [];
+let states = [];
+let roadUsers = [];
+let selectedYear = 2021;
+let selectedState = "Australia";
+let selectedRoadUsers = [];
+let metricMode = "raw";
+let currentHighlight = null;
+let tooltip = null;
+let sexRoadUserData = [];
+
+const chartWidth = 520;
+const chartHeight = 430;
+const streamMargin = { top: 28, right: 22, bottom: 46, left: 22 };
+const partyMargin = { top: 18, right: 18, bottom: 18, left: 18 };
+const waffleMargin = { top: 22, right: 22, bottom: 22, left: 22 };
+const choroMargin = { top: 16, right: 16, bottom: 16, left: 16 };
+
+const preferredRoadUsers = [
+    "Car driver, passenger or unknown position",
+    "Motorcyclist",
+    "Pedal cyclist",
+    "Pedestrian"
+];
+
+// Bright neon palette so charts pop on the dark holographic glass
+const colourRoad = {
+    "Car driver, passenger or unknown position": "#38bdf8",
+    "Motorcyclist": "#c084fc",
+    "Pedal cyclist": "#2dd4bf",
+    "Pedestrian": "#fbbf24",
+    "Heavy transport driver, passenger or unknown position": "#f472b6",
+    "Pick-up truck or van occupant": "#a3e635",
+    "Bus occupant": "#fb923c",
+    "Other or unknown": "#94a3b8"
+};
+
+// Age group ordering and colours
+const ageGroups = ["0-7", "8-16", "17-25", "26-39", "40-64", "65-74", "75+"];
+const colourAge = {
+    "0-7": "#67e8f9",
+    "8-16": "#38bdf8",
+    "17-25": "#818cf8",
+    "26-39": "#c084fc",
+    "40-64": "#f472b6",
+    "65-74": "#fb923c",
+    "75+": "#fbbf24"
+};
+const fallbackColours = ["#38bdf8", "#22d3ee", "#2dd4bf", "#c084fc", "#fbbf24", "#f472b6", "#a3e635"];
+
+// ======================== CUBE STATE ========================
+const FACE_ROTATIONS = { front: { y: 0 }, right: { y: -90 }, back: { y: 180 }, left: { y: 90 } };
+const FACE_LABELS = { front: "Who gets hurt?", right: "How they travel", back: "Who stays longest?", left: "The gender gap" };
+
+const DEFAULT_TILT = -10;   // resting vertical tilt
+const MAX_TILT = 18;        // never let it flip — clamp vertical drag
+const AUTO_ROTATE_SPEED = 0.035;
+const DRAG_SENSITIVITY = 0.4;
+const IDLE_RESUME_MS = 3500;
+
+let cubeEl = null, viewportEl = null;
+let rotX = DEFAULT_TILT, rotY = -18;
+let autoRotateEnabled = true;
+let isDragging = false;
+let pointerStart = null;
+let rafId = null, lastFrameTime = 0, idleResumeTimer = null;
+let activeFace = "front";
+const hiddenItems = { front: new Set(), right: new Set(), back: new Set(), left: new Set() };
+
+// ======================== LOAD CSV ========================
+function loadData() {
+    Promise.all([
+        d3.csv("mergedData.csv"),
+        d3.csv("sexByRoadUser.csv")
+    ]).then(([data, sexData]) => {
+        // Parse sex × road user data
+        sexRoadUserData = sexData.map(d => ({
+            year: +d.year,
+            roadUser: d.roadUser,
+            sex: d.sex,
+            hospitalisations: +d.hospitalisations
+        }));
+        data.forEach(d => {
+            d.year = toNumber(d["Calendar year"]);
+            d.hospitalisations = toNumber(d.Hospitalisations);
+            d.bedDays = toNumber(d["Bed days"]);
+            d.state = cleanText(d["State or territory"]);
+            d.roadUser = cleanText(d["Breakdown value"]);
+            d.breakdownType = cleanText(d["Breakdown type"]);
+            d.dataLevel = cleanText(d["Data level"]);
+        });
+        fullData = data.filter(d => Number.isFinite(d.year) && Number.isFinite(d.hospitalisations));
+
+        years = [...new Set(fullData.map(d => d.year))].sort((a, b) => a - b);
+        selectedYear = years.includes(selectedYear) ? selectedYear : years[years.length - 1];
+
+        states = [...new Set(fullData.map(d => d.state))].filter(Boolean).sort((a, b) => a.localeCompare(b));
+        states = ["Australia", ...states.filter(s => s !== "Australia")];
+
+        const allUsers = [...new Set(fullData.filter(d => isRoadUser(d) && d.roadUser && d.roadUser !== "Total").map(d => d.roadUser))];
+        roadUsers = allUsers.filter(u => preferredRoadUsers.includes(u));
+        if (!roadUsers.length) roadUsers = allUsers.slice(0, 6);
+        selectedRoadUsers = [...roadUsers];
+
+        populateFilters();
+        attachEvents();
+        initCube();
+        updateAllCharts();
+    }).catch(err => {
+        console.error("CSV load error:", err);
+        document.querySelectorAll(".face-chart").forEach(div => {
+            div.innerHTML = `<div class="empty-state">Cannot load <strong>mergedData.csv</strong>. Place the CSV next to <code>index.html</code> and reload.</div>`;
+        });
+        initCube();
+    });
+}
+
+function cleanText(v) { return String(v ?? "").replace(/\s+/g, " ").trim(); }
+function toNumber(v) {
+    if (v === null || v === undefined) return NaN;
+    const c = String(v).replace(/,/g, "").trim();
+    if (!c || c.toLowerCase() === "n.p." || c === "?") return NaN;
+    return Number(c);
+}
+function isTotal(d) { return d.breakdownType.toLowerCase() === "total"; }
+function isRoadUser(d) { return d.breakdownType.toLowerCase() === "road user"; }
+function isNationalLevel(d) { return d.dataLevel.toLowerCase().includes("national"); }
+function isStateLevel(d) { const l = d.dataLevel.toLowerCase(); return l.includes("state") || l.includes("territory"); }
+
+function displayRoadUser(name) {
+    return name.replace("Car driver, passenger or unknown position", "Car")
+        .replace("Motorcyclist", "Motorcycle").replace("Pedal cyclist", "Bicycle")
+        .replace("Heavy transport driver, passenger or unknown position", "Heavy transport")
+        .replace("Pick-up truck or van occupant", "Pick-up / van");
+}
+function colourFor(name, i = 0) { return colourRoad[name] || fallbackColours[i % fallbackColours.length]; }
+function shortNumber(v) { return Number.isFinite(v) ? d3.format("~s")(v).replace("G", "B") : "—"; }
+function formatNumber(v) { return Number.isFinite(v) ? d3.format(",")(Math.round(v)) : "—"; }
+
+// ======================== FILTERS ========================
+function populateFilters() {
+    const yearSel = document.getElementById("year-filter");
+    yearSel.innerHTML = "";
+    years.forEach(y => { const o = document.createElement("option"); o.value = y; o.textContent = y; o.selected = y === selectedYear; yearSel.appendChild(o); });
+
+    const stateSel = document.getElementById("state-filter");
+    stateSel.innerHTML = "";
+    states.forEach(s => { const o = document.createElement("option"); o.value = s; o.textContent = s; o.selected = s === selectedState; stateSel.appendChild(o); });
+
+    const container = document.getElementById("roaduser-checkboxes");
+    container.innerHTML = "";
+    roadUsers.forEach((ru, i) => {
+        const label = document.createElement("label");
+        const cb = document.createElement("input");
+        cb.type = "checkbox"; cb.value = ru; cb.checked = selectedRoadUsers.includes(ru);
+        cb.addEventListener("change", e => {
+            if (e.target.checked) selectedRoadUsers = [...new Set([...selectedRoadUsers, ru])];
+            else selectedRoadUsers = selectedRoadUsers.filter(r => r !== ru);
+            currentHighlight = selectedRoadUsers.includes(currentHighlight) ? currentHighlight : null;
+            updateAllCharts();
+        });
+        const dot = document.createElement("span");
+        dot.style.cssText = `width:10px;height:10px;border-radius:50%;background:${colourFor(ru, i)};display:inline-block;`;
+        label.appendChild(cb); label.appendChild(dot); label.appendChild(document.createTextNode(displayRoadUser(ru)));
+        container.appendChild(label);
+    });
+
+    const rateOption = document.querySelector('#metric-filter option[value="rate"]');
+    if (rateOption) rateOption.disabled = true;
+    updateStaticLabels();
+}
+
+function attachEvents() {
+    document.getElementById("year-filter").addEventListener("change", e => { selectedYear = parseInt(e.target.value, 10); updateAllCharts(); });
+    document.getElementById("state-filter").addEventListener("change", e => { selectedState = e.target.value; updateAllCharts(); });
+    document.getElementById("metric-filter").addEventListener("change", e => { metricMode = e.target.value; updateAllCharts(); });
+
+    document.getElementById("reset-filters").addEventListener("click", () => {
+        // 1. Reset standard configuration drop-downs and selection states
+        selectedYear = years[years.length - 1];
+        selectedState = "Australia";
+        selectedRoadUsers = [...roadUsers];
+        currentHighlight = null;
+        metricMode = "raw";
+
+        // 2. Clear all internal chart legend filter Sets (Faces 1, 2, and 3)
+        if (typeof hiddenItems !== 'undefined') {
+            if (hiddenItems.front) hiddenItems.front.clear();
+            if (hiddenItems.right) hiddenItems.right.clear();
+            if (hiddenItems.back) hiddenItems.back.clear();
+        }
+
+        // 3. Clear gender cross-tab legend filter Set (Face 4)
+        if (window.hiddenSex) {
+            window.hiddenSex.clear();
+        }
+
+        // 4. Update UI elements and re-render all elements
+        populateFilters();
+        document.getElementById("metric-filter").value = "raw";
+        updateAllCharts();
+    });
+}
+
+function updateStaticLabels() {
+    const y = selectedYear ?? "—";
+    ["hero-year", "parliament-year", "waffle-year", "choropleth-year", "stream-year-pill"].forEach(id => {
+        const el = document.getElementById(id); if (el) el.textContent = y;
+    });
+}
+
+// ======================== DATA HELPERS ========================
+function getTotalByYearState(state) {
+    const map = new Map();
+    if (state === "Australia") {
+        const nat = fullData.filter(d => isTotal(d) && isNationalLevel(d));
+        const aus = fullData.filter(d => isTotal(d) && d.state === "Australia");
+        const rows = nat.length ? nat : aus;
+        if (rows.length) rows.forEach(d => map.set(d.year, (map.get(d.year) || 0) + d.hospitalisations));
+        else fullData.filter(d => isTotal(d) && isStateLevel(d) && d.state !== "Australia").forEach(d => map.set(d.year, (map.get(d.year) || 0) + d.hospitalisations));
+    } else {
+        fullData.filter(d => isTotal(d) && d.state === state && isStateLevel(d)).forEach(d => map.set(d.year, (map.get(d.year) || 0) + d.hospitalisations));
+    }
+    return Array.from(map.entries()).map(([year, hosp]) => ({ year, hosp })).sort((a, b) => a.year - b.year);
+}
+
+function getStateComparison(year) {
+    const map = new Map();
+    fullData.filter(d => isTotal(d) && isStateLevel(d) && d.year === year && d.state && d.state !== "Australia")
+        .forEach(d => map.set(d.state, (map.get(d.state) || 0) + d.hospitalisations));
+    return Array.from(map.entries()).map(([state, hosp]) => ({ state, hosp })).sort((a, b) => b.hosp - a.hosp);
+}
+
+function getStateTotalsForYear(year) {
+    const map = new Map();
+    fullData.filter(d => isTotal(d) && isStateLevel(d) && d.year === year && d.state && d.state !== "Australia")
+        .forEach(d => map.set(d.state, (map.get(d.state) || 0) + d.hospitalisations));
+    return map;
+}
+
+function getRoadUserTrends() {
+    // NOTE: road-user breakdown exists ONLY at state/territory level in this dataset.
+    // For "Australia" we sum across every state; for a specific state we filter to it.
+    const cand = fullData.filter(d => isRoadUser(d) && roadUsers.includes(d.roadUser));
+    const nat = cand.filter(d => isNationalLevel(d));
+    let rows;
+    if (nat.length) rows = nat;                                  // use national if it ever exists
+    else if (selectedState === "Australia") rows = cand;          // sum all states → national view
+    else rows = cand.filter(d => d.state === selectedState);      // single state breakdown
+    const map = new Map();
+    rows.forEach(d => {
+        if (!map.has(d.year)) map.set(d.year, { year: d.year, ...Object.fromEntries(roadUsers.map(ru => [ru, 0])) });
+        map.get(d.year)[d.roadUser] += d.hospitalisations;
+    });
+    return Array.from(map.values()).sort((a, b) => a.year - b.year);
+}
+
+function getRadialShare() {
+    const trends = getRoadUserTrends();
+    const row = trends.find(t => t.year === selectedYear);
+    if (!row) return [];
+    return selectedRoadUsers.map(ru => ({ name: ru, value: row[ru] || 0 })).filter(d => d.value > 0);
+}
+
+function getBedDayTrends() {
+    const cand = fullData.filter(d => isRoadUser(d) && roadUsers.includes(d.roadUser));
+    const nat = cand.filter(d => isNationalLevel(d));
+    let rows;
+    if (nat.length) rows = nat;
+    else if (selectedState === "Australia") rows = cand;
+    else rows = cand.filter(d => d.state === selectedState);
+    const map = new Map();
+    rows.forEach(d => {
+        if (!map.has(d.year)) map.set(d.year, { year: d.year, ...Object.fromEntries(roadUsers.map(ru => [ru, 0])) });
+        if (Number.isFinite(d.bedDays)) map.get(d.year)[d.roadUser] += d.bedDays;
+    });
+    return Array.from(map.values()).sort((a, b) => a.year - b.year);
+}
+
+function getBedDayShare() {
+    const trends = getBedDayTrends();
+    const row = trends.find(t => t.year === selectedYear);
+    if (!row) return [];
+    return selectedRoadUsers.map(ru => ({ name: ru, value: row[ru] || 0 })).filter(d => d.value > 0);
+}
+
+function getAgeTrends() {
+    const cand = fullData.filter(d => d.breakdownType.toLowerCase() === "age group" && ageGroups.includes(d.roadUser));
+    let rows;
+    if (selectedState === "Australia") rows = cand;
+    else rows = cand.filter(d => d.state === selectedState);
+    const map = new Map();
+    rows.forEach(d => {
+        if (!map.has(d.year)) map.set(d.year, { year: d.year, ...Object.fromEntries(ageGroups.map(a => [a, 0])) });
+        map.get(d.year)[d.roadUser] += d.hospitalisations;
+    });
+    return Array.from(map.values()).sort((a, b) => a.year - b.year);
+}
+
+function getSexByState(year) {
+    const rows = fullData.filter(d =>
+        d.breakdownType.toLowerCase() === "sex" &&
+        d.year === year &&
+        d.state !== "Australia"
+    );
+    const map = new Map();
+    rows.forEach(d => {
+        if (!map.has(d.state)) map.set(d.state, { state: d.state, Male: 0, Female: 0 });
+        if (d.roadUser === "Male") map.get(d.state).Male += d.hospitalisations;
+        if (d.roadUser === "Female") map.get(d.state).Female += d.hospitalisations;
+    });
+    return Array.from(map.values()).sort((a, b) => (b.Male + b.Female) - (a.Male + a.Female));
+}
+
+function updateKpis() {
+    // 1. Helper function to normalize any string format down to its short key token
+    const getShortName = (name) => {
+        if (!name) return "";
+        const nameMap = {
+            "Car driver, passenger or unknown position": "Car",
+            "Motorcyclist": "Motorcyclist",
+            "Pedal cyclist": "Pedal cyclist",
+            "Pedestrian": "Pedestrian",
+            "Heavy transport driver, passenger or unknown position": "Heavy transport",
+            "Pick-up truck or van occupant": "Pick-up / van",
+            "Bus occupant": "Bus occupant",
+            "Other or unknown": "Other"
+        };
+        if (nameMap[name]) return nameMap[name];
+        
+        // If it's already a short token value, return it directly
+        const shortValues = Object.values(nameMap);
+        if (shortValues.includes(name)) return name;
+
+        // Fallback loose matching containment check
+        for (const [long, short] of Object.entries(nameMap)) {
+            if (name.toLowerCase().includes(long.toLowerCase()) || long.toLowerCase().includes(name.toLowerCase())) return short;
+            if (name.toLowerCase().includes(short.toLowerCase()) || short.toLowerCase().includes(name.toLowerCase())) return short;
+        }
+        return name;
+    };
+
+    // Grab checked elements from the DOM checkboxes
+    const checkedCheckboxes = Array.from(document.querySelectorAll('#roaduser-checkboxes input[type="checkbox"]:checked'))
+                                   .map(cb => cb.value.trim());
+
+    const activeHighlight = typeof currentHighlight !== 'undefined' ? currentHighlight : null;
+
+    // Central row matcher evaluating uniform normalized tokens
+    const matchRU = (d) => {
+        const rowShort = getShortName(d.roadUser);
+
+        if (activeHighlight) {
+            return rowShort.toLowerCase() === getShortName(activeHighlight).toLowerCase();
+        }
+
+        if (checkedCheckboxes.length > 0) {
+            return checkedCheckboxes.some(val => getShortName(val).toLowerCase() === rowShort.toLowerCase());
+        }
+
+        return true; 
+    };
+
+    // Subtitle rendering context
+    let filterLabel = "";
+    if (activeHighlight) {
+        filterLabel = ` (${activeHighlight})`;
+    } else if (checkedCheckboxes.length > 0 && checkedCheckboxes.length < 4) {
+        filterLabel = ` (${checkedCheckboxes.map(getShortName).join(', ')})`;
+    } else if (checkedCheckboxes.length >= 4) {
+        filterLabel = " (Mixed modes)";
     }
 
-    50% {
-        box-shadow: 0 0 0 10px rgba(34, 211, 238, 0);
+    // =========================================================================
+    // 1. TOTAL HOSPITALISATIONS CARD (National)
+    // =========================================================================
+    const nationalRows = fullData.filter(d => 
+        isRoadUser(d) && d.year === selectedYear && d.state !== "Australia" && matchRU(d)
+    );
+    const totalHospValue = d3.sum(nationalRows, d => d.hospitalisations);
+
+    document.getElementById("kpi-total").textContent = formatNumber(totalHospValue);
+    document.getElementById("kpi-total-note").textContent = `Australia, ${selectedYear}${filterLabel}`;
+
+    // =========================================================================
+    // 2. TOP STATE / TERRITORY CARD
+    // =========================================================================
+    const topCand = fullData.filter(d => 
+        isRoadUser(d) && d.year === selectedYear && d.state !== "Australia" && matchRU(d)
+    );
+    
+    const stateMap = new Map();
+    topCand.forEach(d => {
+        stateMap.set(d.state, (stateMap.get(d.state) || 0) + d.hospitalisations);
+    });
+    
+    const sortedStates = Array.from(stateMap.entries())
+        .map(([state, hosp]) => ({ state, hosp }))
+        .sort((a, b) => b.hosp - a.hosp);
+    
+    const top = sortedStates[0];
+    document.getElementById("kpi-top-state").textContent = top ? top.state : "—";
+    document.getElementById("kpi-top-state-note").textContent = top ? `${formatNumber(top.hosp)} cases in ${selectedYear}` : "No state data";
+
+    // =========================================================================
+    // 3. HISTORICAL TREND CARD
+    // =========================================================================
+    const trendCand = fullData.filter(d => 
+        isRoadUser(d) && matchRU(d) && (selectedState === "Australia" ? d.state !== "Australia" : d.state === selectedState)
+    );
+    
+    const yearMap = new Map();
+    trendCand.forEach(d => {
+        yearMap.set(d.year, (yearMap.get(d.year) || 0) + d.hospitalisations);
+    });
+    
+    const sortedYears = Array.from(yearMap.keys()).sort((a, b) => a - b);
+    
+    if (sortedYears.length > 0) {
+        const firstYear = sortedYears[0];
+        const firstHosp = yearMap.get(firstYear) || 0;
+        const selectedHosp = yearMap.get(selectedYear) || 0;
+
+        if (firstYear !== selectedYear && firstHosp > 0) {
+            const pct = ((selectedHosp - firstHosp) / firstHosp) * 100;
+            document.getElementById("kpi-trend").textContent = `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
+            document.getElementById("kpi-trend-note").textContent = `${selectedState}, ${firstYear} to ${selectedYear}${filterLabel}`;
+        } else {
+            document.getElementById("kpi-trend").textContent = formatNumber(selectedHosp);
+            document.getElementById("kpi-trend-note").textContent = `${selectedState}, baseline year ${selectedYear}${filterLabel}`;
+        }
+    } else {
+        document.getElementById("kpi-trend").textContent = "—";
+        document.getElementById("kpi-trend-note").textContent = "Not enough data";
+    }
+
+    // =========================================================================
+    // 4. GENDER RATIO SUMMARY CARD (Now cleanly updates with checkboxes)
+    // =========================================================================
+    let totalMale = 0;
+    let totalFemale = 0;
+    const sexYear = sexRoadUserData.filter(d => d.year === selectedYear);
+
+    if (selectedState === "Australia") {
+        totalMale = d3.sum(sexYear.filter(d => d.sex === "Male" && matchRU(d)), d => d.hospitalisations);
+        totalFemale = d3.sum(sexYear.filter(d => d.sex === "Female" && matchRU(d)), d => d.hospitalisations);
+    } else {
+        const natTotals = new Map();
+        sexYear.forEach(d => {
+            const shortName = getShortName(d.roadUser);
+            if (!natTotals.has(shortName)) natTotals.set(shortName, { Male: 0, Female: 0 });
+            natTotals.get(shortName)[d.sex] += d.hospitalisations;
+        });
+
+        const ratios = new Map();
+        natTotals.forEach((v, k) => {
+            const t = v.Male + v.Female;
+            ratios.set(k, { Male: t > 0 ? v.Male / t : 0.5, Female: t > 0 ? v.Female / t : 0.5 });
+        });
+
+        const stateRU = fullData.filter(d =>
+            isRoadUser(d) && d.year === selectedYear && d.state === selectedState && matchRU(d)
+        );
+
+        stateRU.forEach(d => {
+            const shortName = getShortName(d.roadUser);
+            const ratio = ratios.get(shortName);
+            if (!ratio) return;
+            totalMale += d.hospitalisations * ratio.Male;
+            totalFemale += d.hospitalisations * ratio.Female;
+        });
+
+        totalMale = Math.round(totalMale);
+        totalFemale = Math.round(totalFemale);
+    }
+
+    const totalSex = totalMale + totalFemale;
+    if (totalSex > 0) {
+        const malePct = (totalMale / totalSex * 100).toFixed(0);
+        document.getElementById("kpi-gender").textContent = `${malePct}% Male`;
+        document.getElementById("kpi-gender-note").textContent = `${selectedState}, ${formatNumber(totalMale)} of ${formatNumber(totalSex)}${filterLabel}`;
+    } else {
+        document.getElementById("kpi-gender").textContent = "—";
+        document.getElementById("kpi-gender-note").textContent = "No sex data";
     }
 }
 
-.cube-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+
+
+// ======================== DRAWING HELPERS ========================
+function clearContainer(id) { const c = document.getElementById(id); if (c) c.innerHTML = ""; return c; }
+function emptyState(c, msg) { if (c) c.innerHTML = `<div class="empty-state">${msg}</div>`; }
+
+function baseSvg(container, m, height = chartHeight, width = chartWidth) {
+    const tw = width + m.left + m.right, th = height + m.top + m.bottom;
+    const svgEl = d3.select(container).append("svg")
+        .attr("viewBox", `0 0 ${tw} ${th}`).attr("preserveAspectRatio", "xMidYMid meet")
+        .style("opacity", 0)
+        .style("filter", "blur(8px)");
+    svgEl.transition().duration(500).ease(d3.easeCubicOut)
+        .style("opacity", 1)
+        .style("filter", "blur(0px)");
+    return svgEl.append("g").attr("transform", `translate(${m.left},${m.top})`);
 }
 
-.face-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    width: 100%;
-    padding: 0.7rem 0.85rem;
-    border: 1px solid rgba(56, 189, 248, 0.2);
-    border-radius: 14px;
-    background: rgba(8, 20, 44, 0.7);
-    color: var(--ink);
-    font: inherit;
-    font-size: 0.88rem;
-    font-weight: 800;
-    cursor: pointer;
-    text-align: left;
-    transition: transform 0.18s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+function createTooltip() {
+    if (!tooltip) tooltip = d3.select("body").append("div").attr("class", "d3-tooltip").style("display", "none");
+    return tooltip;
 }
 
-.face-btn:hover {
-    transform: translateX(2px);
-    color: var(--primary-text);
-    border-color: var(--cyan);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4), 0 0 12px rgba(34, 211, 238, 0.18);
+/**
+ * Attaches dashboard tooltips to layout metrics and header panels
+ */
+function initDashboardTooltips() {
+    // Select both KPI cards and the hero panel element
+    const interactiveElements = document.querySelectorAll('.kpi-card, .hero-panel');
+    
+    interactiveElements.forEach(el => {
+        const textValue = el.getAttribute('data-tip');
+        if (!textValue) return;
+
+        // Determine title: look for a label class or default to "Time Filter" for the hero panel
+        const labelText = el.querySelector('.kpi-label')?.textContent || 
+                          el.querySelector('.hero-label')?.textContent || 
+                          "Temporal Scope";
+
+        el.addEventListener('mouseover', (event) => {
+            showTip(event, `<b>${labelText}</b><br>${textValue}`);
+        });
+
+        el.addEventListener('mousemove', (event) => {
+            showTip(event, `<b>${labelText}</b><br>${textValue}`);
+        });
+
+        el.addEventListener('mouseout', () => {
+            hideTip();
+        });
+    });
 }
 
-.face-btn.active {
-    background: linear-gradient(135deg, var(--primary), var(--cyan));
-    color: #04122a;
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 12px 24px rgba(34, 211, 238, 0.3);
+// Execute setup once the main structural document loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDashboardTooltips);
+} else {
+    initDashboardTooltips();
+}
+/**
+ * Attaches dashboard tooltips and micro-interactions to layout KPI components
+ */
+function initKpiCardTooltips() {
+    const cards = document.querySelectorAll('.kpi-card');
+
+    cards.forEach(card => {
+        const textValue = card.getAttribute('data-tip');
+        if (!textValue) return;
+
+        // Extract the label text dynamically to use as a bold header in the tooltip
+        const labelText = card.querySelector('.kpi-label')?.textContent || "Metric Insight";
+
+        card.addEventListener('mouseover', (event) => {
+            showTip(event, `<b>${labelText}</b><br>${textValue}`);
+        });
+
+        card.addEventListener('mousemove', (event) => {
+            showTip(event, `<b>${labelText}</b><br>${textValue}`);
+        });
+
+        card.addEventListener('mouseout', () => {
+            hideTip();
+        });
+    });
 }
 
-.btn-num {
-    flex: 0 0 auto;
-    display: inline-grid;
-    place-items: center;
-    width: 22px;
-    height: 22px;
-    border-radius: 7px;
-    background: rgba(34, 211, 238, 0.16);
-    color: var(--primary-text);
-    font-size: 0.72rem;
-    font-weight: 900;
+// Execute initialization once the main structural document loads
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initKpiCardTooltips);
+} else {
+    initKpiCardTooltips();
 }
 
-.face-btn.active .btn-num {
-    background: rgba(4, 18, 42, 0.35);
-    color: #eafdff;
+function showTip(event, html) {
+    const t = event.currentTarget;
+    const fixed = t && t.classList && (t.classList.contains("kpi-card") || t.classList.contains("hero-panel"));
+    const tip = createTooltip()
+        .classed("tip-fixed", !!fixed)
+        .style("display", "block")
+        .html(html);
+
+    const node = tip.node();
+    const tw = node.offsetWidth;
+    const th = node.offsetHeight;
+    const pad = 12;
+    const vw = document.documentElement.clientWidth;
+    const vh = document.documentElement.clientHeight;
+
+    let left = event.pageX + 14;
+    let top = event.pageY - 34;
+
+    const maxLeft = window.scrollX + vw - tw - pad;
+    const minLeft = window.scrollX + pad;
+    if (left > maxLeft) left = event.pageX - 14 - tw;
+    left = Math.max(minLeft, Math.min(left, maxLeft));
+
+    const maxTop = window.scrollY + vh - th - pad;
+    const minTop = window.scrollY + pad;
+    top = Math.max(minTop, Math.min(top, maxTop));
+
+    tip.style("left", `${left}px`).style("top", `${top}px`);
 }
+function hideTip() { if (tooltip) tooltip.style("display", "none"); }
 
-.btn-label {
-    flex: 1;
-}
+// ============================================================
+// ===================== CHART FUNCTIONS ======================
+// ============================================================
 
-.auto-toggle {
-    width: 100%;
-    padding: 0.65rem;
-    border: 1px solid rgba(56, 189, 248, 0.22);
-    border-radius: 14px;
-    background: rgba(8, 20, 44, 0.7);
-    color: var(--primary-text);
-    font: inherit;
-    font-size: 0.82rem;
-    font-weight: 850;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
+// FACE 1 (front): STREAM GRAPH — road users over time
+function drawStreamChart() {
+    const container = clearContainer("chart-stream");
+    if (!container) return;
 
-.auto-toggle:hover {
-    border-color: var(--cyan);
-    background: rgba(12, 28, 58, 0.9);
-}
+    // Get age group data for selected year, aggregated across states or filtered to selected state
+    const cand = fullData.filter(d => d.breakdownType.toLowerCase() === "age group" && ageGroups.includes(d.roadUser));
+    let rows;
+    if (selectedState === "Australia") rows = cand.filter(d => d.year === selectedYear);
+    else rows = cand.filter(d => d.year === selectedYear && d.state === selectedState);
 
-.auto-toggle[aria-pressed="false"] {
-    color: var(--gold);
-    border-color: rgba(251, 191, 36, 0.4);
-}
+    const map = new Map();
+    rows.forEach(d => map.set(d.roadUser, (map.get(d.roadUser) || 0) + d.hospitalisations));
 
-.status-block {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding-top: 0.85rem;
-    border-top: 1px solid rgba(34, 211, 238, 0.14);
-}
-
-.status-label {
-    color: var(--muted);
-    font-size: 0.66rem;
-    font-weight: 850;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-}
-
-.status-pill {
-    padding: 0.5rem 0.8rem;
-    border-radius: 12px;
-    text-align: center;
-    background: linear-gradient(135deg, #061427, #0a1f3c);
-    color: var(--cyan);
-    font-size: 0.84rem;
-    font-weight: 850;
-    box-shadow: inset 0 0 14px rgba(34, 211, 238, 0.25);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-}
-
-/* ============================================================
-   ===== CHART STYLING (light ink for dark holo faces) =======
-   ============================================================ */
-.face-chart .axis text {
-    fill: var(--holo-ink-dim);
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.face-chart .axis path,
-.face-chart .axis line {
-    stroke: rgba(125, 211, 252, 0.32);
-}
-
-.face-chart .grid line {
-    stroke: rgba(125, 211, 252, 0.14);
-    stroke-dasharray: 3 6;
-}
-
-.face-chart .grid path {
-    stroke-width: 0;
-}
-
-.face-chart .value-label {
-    fill: var(--holo-ink);
-    font-size: 10px;
-    font-weight: 800;
-}
-
-.face-chart .legend-item text {
-    fill: var(--holo-ink);
-    font-weight: 800;
-}
-
-.empty-state {
-    display: grid;
-    place-items: center;
-    height: 100%;
-    min-height: 220px;
-    padding: 1.4rem;
-    color: var(--holo-ink-dim);
-    text-align: center;
-    font-weight: 750;
-}
-
-/* Interactive chart elements */
-.parliament-seat,
-.waffle-cell,
-.choro-state,
-.stream-layer {
-    cursor: pointer;
-}
-
-.choro-state {
-    stroke: rgba(7, 22, 46, 0.6);
-    stroke-width: 0.6;
-    transition: opacity 0.2s ease;
-}
-
-.choro-state:hover {
-    opacity: 1;
-    stroke: #67e8f9;
-    stroke-width: 1.6;
-}
-
-
-/* ==================== FOOTER & TOOLTIP ==================== */
-.dashboard-footer {
-    z-index: 1;
-    position: relative;
-    padding: 0.7rem 2rem 0.8rem;
-    color: rgba(200, 226, 252, 0.82);
-    text-align: center;
-    font-size: 0.75rem;
-    background:
-        radial-gradient(120% 180% at 50% 100%, rgba(34, 211, 238, 0.12), transparent 60%),
-        linear-gradient(0deg, #0a1c40 0%, #081530 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.dashboard-footer::before {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; top: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--cyan) 25%, var(--violet-soft) 75%, transparent);
-    box-shadow: 0 0 12px rgba(34, 211, 238, 0.45);
-    pointer-events: none;
-}
-
-svg {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-.d3-tooltip {
-    position: absolute;
-    z-index: 9999;
-    max-width: 250px;
-    padding: 0.7rem 0.9rem;
-    border: 1px solid rgba(34, 211, 238, 0.6);
-    border-radius: 14px;
-    background: rgba(6, 18, 38, 0.95);
-    color: #e0f7ff;
-    box-shadow: 0 18px 40px rgba(2, 10, 25, 0.5), 0 0 18px rgba(34, 211, 238, 0.3);
-    font-size: 0.82rem;
-    pointer-events: none;
-    backdrop-filter: blur(10px);
-}
-
-/* KPI / hero tooltips: fixed-shape box — never reflows by position or text length */
-.d3-tooltip.tip-fixed {
-    width: 230px;
-    max-width: 230px;
-    white-space: normal;
-    line-height: 1.4;
-}
-
-.d3-tooltip b {
-    color: #67e8f9;
-}
-
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 1180px) {
-    .kpi-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    // Scale age bars by the road-user filter selection
+    let ruFactor = 1;
+    const ruRow = getRoadUserTrends().find(t => t.year === selectedYear);
+    if (ruRow) {
+        const totalAll = roadUsers.reduce((s, ru) => s + (ruRow[ru] || 0), 0);
+        const totalSel = selectedRoadUsers.reduce((s, ru) => s + (ruRow[ru] || 0), 0);
+        if (totalAll > 0) ruFactor = totalSel / totalAll;
     }
 
-    .filter-bar {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    const allData = ageGroups.map(ag => ({ age: ag, value: (map.get(ag) || 0) * ruFactor })).filter(d => d.value > 0);
+    const data = allData.filter(d => !hiddenItems.front.has(d.age));
 
-    .road-filter {
-        grid-column: 1 / -1;
-    }
 
-    :root {
-        --cube-size: 460px;
-        --cube-perspective: 1600px;
-    }
+    if (!data.length) return emptyState(container, `No age data for ${selectedYear}.`);
+
+    const margin = { top: 28, right: 110, bottom: 46, left: 50 };
+    const svg = baseSvg(container, margin);
+    const total = d3.sum(data, d => d.value);
+
+    const y = d3.scaleBand().domain(data.map(d => d.age)).range([0, chartHeight]).padding(0.25);
+    const innerW = chartWidth - 60;
+    const x = d3.scaleLinear().domain([0, d3.max(data, d => d.value)]).range([0, innerW]);
+
+    // Bars
+    svg.selectAll(".age-bar")
+        .data(data).enter()
+        .append("rect")
+        .attr("class", "age-bar")
+        .attr("x", 0).attr("y", d => y(d.age))
+        .attr("width", 0).attr("height", y.bandwidth()).attr("rx", 5)
+        .attr("fill", d => colourAge[d.age] || "#94a3b8")
+        .attr("opacity", 0.9)
+        .attr("cursor", "pointer")
+        .on("mouseover", function (event, d) {
+            d3.select(this).attr("opacity", 1);
+            const pct = (d.value / total * 100).toFixed(1);
+            showTip(event, `<b>Age ${d.age} · ${selectedYear}</b><br>${formatNumber(d.value)} hospitalisations · ${pct}%`);
+        })
+        .on("mousemove", function (event, d) {
+            const pct = (d.value / total * 100).toFixed(1);
+            showTip(event, `<b>Age ${d.age}</b><br>${formatNumber(d.value)} · ${pct}%`);
+        })
+        .on("mouseout", function () { d3.select(this).attr("opacity", 0.9); hideTip(); })
+        .transition().duration(600).delay((d, i) => i * 60)
+        .attr("width", d => x(d.value));
+
+    // Value labels at end of bar
+    svg.selectAll(".age-val")
+        .data(data).enter()
+        .append("text")
+        .attr("x", d => x(d.value) + 8).attr("y", d => y(d.age) + y.bandwidth() / 2)
+        .attr("dy", "0.35em").attr("text-anchor", "start")
+        .style("fill", "#e0f7ff").style("font-size", "11px").style("font-weight", "800")
+        .text(d => `${formatNumber(d.value)}  (${(d.value / total * 100).toFixed(0)}%)`);
+    // 1. Position the title and push the interactive items down slightly
+    const titleY = chartHeight + 16;
+    const legendY = chartHeight + 36; // Pushed down by 20px to clear the title
+
+    // 2. Render the "Age Range" Section Title (Centered)
+    svg.append("text")
+        .attr("x", chartWidth / 1.77) // Position X in the exact horizontal middle
+        .attr("y", titleY)
+        .attr("text-anchor", "middle") // Centers the text baseline over the X coordinate
+        .style("fill", "#e0f7ff")
+        .style("font-size", "16px")
+        .style("font-weight", "900")
+        .style("letter-spacing", "0.06em")
+        .text("Age Range Filter");
+
+    // Clickable legend items
+    allData.forEach((d, i) => {
+        const g = svg.append("g")
+            .attr("class", "chart-click")
+            .attr("transform", `translate(${i * 88}, ${legendY})`)
+            .attr("cursor", "pointer")
+            .attr("opacity", hiddenItems.front.has(d.age) ? 0.3 : 1)
+            .on("click", () => {
+                const isHidden = hiddenItems.front.has(d.age);
+                if (!isHidden && allData.filter(a => !hiddenItems.front.has(a.age)).length <= 1) return;
+                if (isHidden) hiddenItems.front.delete(d.age);
+                else hiddenItems.front.add(d.age);
+                drawStreamChart();
+            });
+
+        g.append("rect")
+            .attr("width", 14)
+            .attr("height", 14)
+            .attr("rx", 3)
+            .attr("fill", colourAge[d.age]);
+
+        g.append("text")
+            .attr("x", 20)
+            .attr("y", 7)
+            .attr("dy", "0.35em")
+            .style("font-size", "12px")
+            .style("fill", "#d6f0ff")
+            .style("font-weight", "800")
+            .style("text-decoration", hiddenItems.front.has(d.age) ? "line-through" : "none")
+            .text(d.age);
+    });
+}
+// FACE 2 (right): PARLIAMENT CHART — composition of selected year
+function drawParliamentChart() {
+    const data = getRadialShare();
+    const filteredData = data.filter(d => !hiddenItems.right.has(d.name));
+    const container = clearContainer("chart-parliament");
+    if (!container) return;
+    if (!data.length) return emptyState(container, `No composition data for ${selectedYear}.`);
+
+    const svg = baseSvg(container, partyMargin);
+    const total = d3.sum(filteredData, d => d.value);
+
+    // =========================================================================
+    // UPDATED LAYOUT COORDINATES TO LIFT EVERYTHING UP
+    // =========================================================================
+    const cx = chartWidth / 2;
+    const cy = chartHeight * 0.76; // Lifted from 0.92 to 0.76 to clear bottom space
+
+    // Adjusted radius math to fit perfectly within the newly lifted space
+    const outerR = Math.min(chartWidth / 2, chartHeight * 0.70) * 0.98;
+    const innerR = outerR * 0.42;
+    // =========================================================================
+
+    const nRows = 6;
+    const nSeats = Math.max(40, Math.min(220, Math.round(total / Math.max(1, Math.round(total / 160)))));
+    const seatValue = total / nSeats;
+
+    // Build seat positions across concentric semicircle rows
+    const radii = d3.range(nRows).map(i => nRows === 1 ? (innerR + outerR) / 2 : innerR + (outerR - innerR) * (i / (nRows - 1)));
+    const wsum = d3.sum(radii);
+    let counts = radii.map(r => Math.floor(nSeats * r / wsum));
+    let rem = nSeats - d3.sum(counts), k = counts.length - 1;
+    while (rem > 0) { counts[k]++; rem--; k = (k - 1 + counts.length) % counts.length; }
+
+    let seats = [];
+    counts.forEach((cnt, ri) => {
+        const rad = radii[ri];
+        for (let s = 0; s < cnt; s++) {
+            const t = cnt === 1 ? 0.5 : s / (cnt - 1);
+            const ang = Math.PI - t * Math.PI; // left → right
+            seats.push({ ang, x: cx + rad * Math.cos(ang), y: cy - rad * Math.sin(ang) });
+        }
+    });
+    seats.sort((a, b) => b.ang - a.ang); // leftmost first
+
+    const seatR = Math.max(3, Math.min(8.5, (outerR - innerR) / nRows * 0.42));
+
+    // Assign each seat a category (contiguous wedges)
+    let cursor = 0;
+    filteredData.forEach((d, di) => {
+        let seatsFor = di === filteredData.length - 1 ? seats.length - cursor : Math.round(d.value / total * nSeats);
+        for (let s = 0; s < seatsFor && cursor < seats.length; s++) { seats[cursor].name = d.name; seats[cursor].value = d.value; cursor++; }
+    });
+    while (cursor < seats.length) { seats[cursor].name = data[data.length - 1].name; cursor++; }
+
+    svg.selectAll(".parliament-seat")
+        .data(seats).enter()
+        .append("circle")
+        .attr("class", "parliament-seat")
+        .attr("cx", d => d.x).attr("cy", d => d.y).attr("r", 0)
+        .attr("fill", d => colourFor(d.name, roadUsers.indexOf(d.name)))
+        .attr("opacity", d => currentHighlight && currentHighlight !== d.name ? 0.2 : 0.95)
+        .attr("stroke", "rgba(6,18,38,0.5)").attr("stroke-width", 0.5)
+        .on("mouseover", function (event, d) {
+            const pct = (d.value / total * 100).toFixed(1);
+            showTip(event, `<b>${displayRoadUser(d.name)}</b><br>${formatNumber(d.value)} hospitalisations · ${pct}%<br><small>1 seat ≈ ${formatNumber(seatValue)}</small>`);
+        })
+        .on("mousemove", function (event, d) {
+            const pct = (d.value / total * 100).toFixed(1);
+            showTip(event, `<b>${displayRoadUser(d.name)}</b><br>${formatNumber(d.value)} · ${pct}%`);
+        })
+        .on("mouseout", hideTip)
+        .on("click", function (event, d) { currentHighlight = currentHighlight === d.name ? null : d.name; updateAllCharts(); })
+        .transition().duration(550).delay((d, i) => i * 4).attr("r", seatR);
+
+    // Centre total labels (these move up automatically because they use cy)
+    svg.append("text").attr("x", cx).attr("y", cy - 6).attr("text-anchor", "middle")
+        .style("fill", "#e0f7ff").style("font-size", "26px").style("font-weight", "900").style("letter-spacing", "-0.04em")
+        .text(formatNumber(total));
+    svg.append("text").attr("x", cx).attr("y", cy + 14).attr("text-anchor", "middle")
+        .style("fill", "rgba(160,205,240,0.8)").style("font-size", "10px").style("font-weight", "800")
+        .style("letter-spacing", "0.1em").text(`${selectedYear} · ${selectedState}`);
+
+    // Interactive Bottom Filter Legend Positioning
+    const titleY = cy + 55;      // Increased from +40 to push the title further down away from the chart text
+    const legendY = titleY + 14; // Decreased from +18 to pull the legend elements closer to the title
+
+    // Render the "Transportation Type Filter" Section Title (Centered)
+    svg.append("text")
+        .attr("x", cx)
+        .attr("y", titleY)
+        .attr("text-anchor", "middle")
+        .style("fill", "#e0f7ff")
+        .style("font-size", "14px")
+        .style("font-weight", "900")
+        .style("letter-spacing", "0.06em")
+        .text("Transportation Type Filter");
+
+    // Render interactive filter options inside a group
+    const legend = svg.append("g");
+
+    data.forEach((d, i) => {
+        const hidden = hiddenItems.right.has(d.name);
+        const it = legend.append("g")
+            .attr("class", "chart-click")
+            .attr("transform", `translate(${i * 120}, 0)`)
+            .attr("cursor", "pointer")
+            .attr("opacity", hidden ? 0.3 : 1)
+            .on("click", () => {
+                if (hidden) hiddenItems.right.delete(d.name);
+                else hiddenItems.right.add(d.name);
+                drawParliamentChart();
+            });
+
+        // Legend circle indicator - now matches the exact dynamic size of the chart seats
+        it.append("circle")
+            .attr("cx", 0)
+            .attr("cy", 0)
+            .attr("r", seatR) // Changed from hardcoded 5 to dynamic seatR
+            .attr("fill", colourFor(d.name, roadUsers.indexOf(d.name)));
+
+        it.append("text")
+            .attr("x", seatR + 7) // Automatically spaces text out cleanly based on the circle size
+            .attr("y", 4)
+            .style("font-size", "11px")
+            .style("fill", "#d6f0ff")
+            .style("font-weight", "800")
+            .style("text-decoration", hidden ? "line-through" : "none")
+            .text(displayRoadUser(d.name));
+    });
+
+    // Automatically center the entire combined layout group horizontally under the chart
+    const lb = legend.node().getBBox();
+    legend.attr("transform", `translate(${(chartWidth - lb.width) / 2 - lb.x}, ${legendY})`);
 }
 
-@media (max-width: 900px) {
+// FACE 3 (back): WAFFLE CHART — 100 squares = 100%
+function drawWaffleChart() {
+    const data = getBedDayShare();
+    const container = clearContainer("chart-waffle");
+    if (!container) return;
+    if (!data.length) return emptyState(container, `No share data for ${selectedYear}.`);
 
-    .cube-stage {
-        flex-direction: column;
+    // Ensure hiddenItems tracking object and 'back' Set exist safely
+    if (typeof hiddenItems === 'undefined') window.hiddenItems = {};
+    if (!hiddenItems.back) hiddenItems.back = new Set();
+
+    // 1. Filter out categories that have been toggled off in the legend
+    const filteredData = data.filter(d => !hiddenItems.back.has(d.name));
+    if (!filteredData.length) return emptyState(container, `All categories filtered out for ${selectedYear}.`);
+
+    const svg = baseSvg(container, waffleMargin);
+    const total = d3.sum(filteredData, d => d.value);
+
+    // Cells per category, rounded to sum exactly 100 (using filtered data)
+    let cellData = filteredData.map(d => ({ name: d.name, value: d.value, n: Math.round(d.value / total * 100) }));
+    let diff = 100 - d3.sum(cellData, c => c.n);
+    cellData.sort((a, b) => b.value - a.value);
+    let idx = 0;
+    while (diff !== 0 && cellData.length) {
+        cellData[idx % cellData.length].n += diff > 0 ? 1 : -1;
+        diff += diff > 0 ? -1 : 1; idx++;
     }
 
-    .cube-sidebar {
-        flex: 1 1 auto;
-        width: 100%;
-        align-self: stretch;
-    }
+    const cells = [];
+    cellData.forEach(c => { for (let i = 0; i < c.n; i++) cells.push({ name: c.name, value: c.value }); });
 
-    .cube-controls {
-        flex-direction: row;
-        flex-wrap: wrap;
-    }
+    const cols = 10, rows = 10, gap = 4;
+    const legendH = 92;                                    // reserve room for the legend
+    const availH = chartHeight - legendH;                  // height left for the grid
+    const size = (Math.min(chartWidth, availH) - (cols - 1) * gap) / cols;
+    const gridW = cols * size + (cols - 1) * gap;
+    const offsetX = (chartWidth - gridW) / 2;
+    const offsetY = 0;                                     // grid sits at the top
 
-    .face-btn {
-        width: auto;
-        flex: 1 1 130px;
-    }
+    svg.selectAll(".waffle-cell")
+        .data(cells).enter()
+        .append("rect")
+        .attr("class", "waffle-cell")
+        .attr("x", (d, i) => offsetX + Math.floor(i / rows) * (size + gap))
+        .attr("y", (d, i) => offsetY + (rows - 1 - (i % rows)) * (size + gap))
+        .attr("width", size).attr("height", size).attr("rx", 3)
+        .attr("fill", d => colourFor(d.name, roadUsers.indexOf(d.name)))
+        .attr("opacity", 0)
+        .on("mouseover", function (event, d) {
+            const cnt = cells.filter(c => c.name === d.name).length;
+            showTip(event, `<b>${displayRoadUser(d.name)}</b><br>${cnt}% · ${formatNumber(d.value)} bed days`);
+        })
+        .on("mousemove", function (event, d) {
+            const cnt = cells.filter(c => c.name === d.name).length;
+            showTip(event, `<b>${displayRoadUser(d.name)}</b><br>${cnt}% · ${formatNumber(d.value)} bed days`);
+        })
+        .on("mouseout", hideTip)
+        .on("click", function (event, d) { currentHighlight = currentHighlight === d.name ? null : d.name; updateAllCharts(); })
+        .transition().duration(500).delay((d, i) => i * 6)
+        .attr("opacity", d => currentHighlight && currentHighlight !== d.name ? 0.22 : 0.95);
 
-    .status-block {
-        margin-top: 0.5rem;
-    }
+
+    // Interactive Bottom Filter Legend Positioning
+    const titleY = gridW + 35;   // Pushes the header down away from the waffle chart grid
+    const legendY = titleY + 18; // Pulls the legend options closer to the header text
+
+    // Render the "Transportation Type Filter" Section Title (Centered)
+    svg.append("text")
+        .attr("x", chartWidth / 2)       // Placed exactly in the horizontal middle
+        .attr("y", titleY)
+        .attr("text-anchor", "middle")   // Centers the text anchor point
+        .style("fill", "#e0f7ff")
+        .style("font-size", "14px")      // Matches heading style from your other views
+        .style("font-weight", "900")
+        .style("letter-spacing", "0.06em")
+        .text("Transportation Type Filter");
+
+    // 2. Render legend container
+    const legend = svg.append("g");
+
+    data.slice().sort((a, b) => roadUsers.indexOf(a.name) - roadUsers.indexOf(b.name)).forEach((d, i) => {
+        const hidden = hiddenItems.back.has(d.name);
+        const matchingCell = cellData.find(c => c.name === d.name);
+        const displayPercentage = matchingCell ? matchingCell.n : 0;
+
+        const it = legend.append("g")
+            .attr("class", "chart-click")
+            .attr("transform", `translate(${i * 120}, 0)`)
+            .attr("cursor", "pointer")
+            .attr("opacity", hidden ? 0.3 : 1)
+            .on("click", () => {
+                if (!hidden && data.filter(x => !hiddenItems.back.has(x.name)).length <= 1) return;
+                if (hidden) hiddenItems.back.delete(d.name);
+                else hiddenItems.back.add(d.name);
+                drawWaffleChart(); // Rerender chart with new layout subset
+            });
+
+        it.append("rect").attr("width", 11).attr("height", 11).attr("rx", 3).attr("fill", colourFor(d.name, roadUsers.indexOf(d.name)));
+
+        it.append("text").attr("x", 16).attr("y", 10)
+            .style("font-size", "11px").style("fill", "#d6f0ff").style("font-weight", "800")
+            .style("text-decoration", hidden ? "line-through" : "none")
+            .text(`${displayRoadUser(d.name)} ${displayPercentage}%`);
+    });
+
+    // Centre the whole legend block horizontally under the grid using the new custom legendY coordinate
+    const lb = legend.node().getBBox();
+    legend.attr("transform", `translate(${(chartWidth - lb.width) / 2 - lb.x}, ${legendY})`);
 }
 
-@media (max-width: 760px) {
-    .dashboard {
-        width: min(100% - 12px, 1500px);
-        margin: 6px auto;
-        border-radius: 24px;
+
+// FACE 4 (left): CHOROPLETH MAP — states coloured by hospitalisations
+function drawChoroplethChart() {
+    const container = clearContainer("chart-choropleth");
+    if (!container) return;
+
+    // Safety initialization for global sex filter tracking
+    window.hiddenSex = window.hiddenSex || new Set();
+    const showMale = !window.hiddenSex.has("Male");
+    const showFemale = !window.hiddenSex.has("Female");
+
+    // National sex × road user ratios for the selected year
+    const natYear = sexRoadUserData.filter(d => d.year === selectedYear);
+    if (!natYear.length) return emptyState(container, `No sex × road user data for ${selectedYear}.`);
+
+    // Build national ratio lookup: { "Car": { Male: 0.48, Female: 0.52 }, ... }
+    const natTotals = new Map();
+    natYear.forEach(d => {
+        if (!natTotals.has(d.roadUser)) natTotals.set(d.roadUser, { Male: 0, Female: 0 });
+        natTotals.get(d.roadUser)[d.sex] += d.hospitalisations;
+    });
+    const ratios = new Map();
+    natTotals.forEach((v, k) => {
+        const t = v.Male + v.Female;
+        ratios.set(k, { Male: t > 0 ? v.Male / t : 0.5, Female: t > 0 ? v.Female / t : 0.5 });
+    });
+
+    // Map long road user names to short names used in sexByRoadUser.csv
+    const nameMap = {
+        "Car driver, passenger or unknown position": "Car",
+        "Motorcyclist": "Motorcyclist",
+        "Pedal cyclist": "Pedal cyclist",
+        "Pedestrian": "Pedestrian",
+        "Heavy transport driver, passenger or unknown position": "Heavy transport",
+        "Pick-up truck or van occupant": "Pick-up / van",
+        "Bus occupant": "Bus occupant",
+        "Other or unknown": "Other"
+    };
+
+    let data;
+    if (selectedState === "Australia") {
+        // Use actual national cross-tab
+        const map = new Map();
+        natYear.forEach(d => {
+            if (!map.has(d.roadUser)) map.set(d.roadUser, { roadUser: d.roadUser, Male: 0, Female: 0 });
+            map.get(d.roadUser)[d.sex] += d.hospitalisations;
+        });
+        data = Array.from(map.values());
+    } else {
+        // Estimate: state road user totals × national sex ratios
+        const stateRU = fullData.filter(d =>
+            isRoadUser(d) && d.year === selectedYear && d.state === selectedState
+        );
+        const map = new Map();
+        stateRU.forEach(d => {
+            const shortName = nameMap[d.roadUser] || d.roadUser;
+            const ratio = ratios.get(shortName);
+            if (!ratio) return;
+            if (!map.has(shortName)) map.set(shortName, { roadUser: shortName, Male: 0, Female: 0 });
+            map.get(shortName).Male += Math.round(d.hospitalisations * ratio.Male);
+            map.get(shortName).Female += Math.round(d.hospitalisations * ratio.Female);
+        });
+        data = Array.from(map.values());
     }
 
-    .dashboard-header,
-    .kpi-grid,
-    .filter-bar {
-        grid-template-columns: 1fr;
+    // Synchronize with Sidebar Checkboxes
+    const checkedCheckboxes = Array.from(document.querySelectorAll('#roaduser-checkboxes input[type="checkbox"]:checked'))
+                                       .map(cb => cb.value.trim());
+
+    const preferredShort = ["Car", "Motorcyclist", "Pedal cyclist", "Pedestrian"];
+    data = data.filter(d => preferredShort.includes(d.roadUser));
+
+    if (checkedCheckboxes.length > 0) {
+        data = data.filter(d => {
+            return checkedCheckboxes.some(val => {
+                const shortVal = nameMap[val] || val;
+                return shortVal.toLowerCase() === d.roadUser.toLowerCase();
+            });
+        });
+    } else {
+        data = [];
     }
 
-    .hero-panel {
-        justify-self: stretch;
+    data = data.map(d => ({ ...d, total: d.Male + d.Female })).sort((a, b) => b.total - a.total);
+    if (!data.length) return emptyState(container, `No active road user selected for ${selectedState} in ${selectedYear}.`);
+
+    const svg = baseSvg(container, choroMargin);
+    const midX = chartWidth / 2;
+
+    // Dynamically adjust max calculation scaling based on visible filters
+    const maxVal = d3.max(data, d => Math.max(showMale ? d.Male : 0, showFemale ? d.Female : 0)) || 1;
+
+    // =========================================================================
+    // UNIFIED COORDINATE BOX (Shared by BOTH layouts)
+    // =========================================================================
+    const barH = Math.min(38, (chartHeight - 65) / data.length - 6);
+    const gap = 6;
+    const totalH = data.length * (barH + gap) - gap;
+    const startY = (chartHeight - totalH) / 2 - 5;
+
+    const leftXBoundary = 50;
+    const rightXBoundary = chartWidth - 50;
+    const baselineY = startY + totalH;
+    const topY = startY;
+
+    const titleY = startY + totalH + 35;
+    const legendY = titleY + 16;
+
+    // =========================================================================
+    // NEW SAFELY POSITIONED EMPTY STATE CHECK
+    // =========================================================================
+    if (!showMale && !showFemale) {
+        // Warning message centered perfectly in chart space
+        svg.append("text")
+            .attr("x", midX)
+            .attr("y", chartHeight / 2 - 15)
+            .attr("text-anchor", "middle")
+            .style("fill", "rgba(160,205,240,0.6)")
+            .style("font-size", "13px")
+            .style("font-weight", "600")
+            .text("Please select at least one gender filter below to view data.");
+
+        // Title at identical position
+        svg.append("text")
+            .attr("x", midX)
+            .attr("y", titleY)
+            .attr("text-anchor", "middle")
+            .style("fill", "#e0f7ff")
+            .style("font-size", "14px")
+            .style("font-weight", "900")
+            .style("letter-spacing", "0.06em")
+            .text("Gender Filter");
+
+        // Clickable interactive legend elements matching baseline layout
+        [{ label: "Male", col: "#38bdf8", x: midX - 55 }, { label: "Female", col: "#f472b6", x: midX + 15 }].forEach(l => {
+            const legItem = svg.append("g")
+                .attr("class", "chart-click")
+                .attr("cursor", "pointer")
+                .attr("opacity", 0.3)
+                .on("click", () => {
+                    window.hiddenSex.delete(l.label);
+                    drawChoroplethChart();
+                });
+
+            legItem.append("rect").attr("x", l.x).attr("y", legendY).attr("width", 11).attr("height", 11).attr("rx", 3).attr("fill", l.col);
+
+            legItem.append("text").attr("x", l.x + 16).attr("y", legendY + 10)
+                .style("fill", "#d6f0ff").style("font-size", "11px").style("font-weight", "800")
+                .style("text-decoration", "line-through")
+                .text(l.label);
+        });
+
+        return; // Early safe exit to prevent drawing active layout modules
     }
 
-    .kpi-grid {
-        padding-inline: 0.75rem;
+    // =========================================================================
+    // LAYOUT CONDITIONAL BRANCH
+    // =========================================================================
+    if (showMale && showFemale) {
+        // --- MODE A: BACK-TO-BACK HORIZONTAL PYRAMID CHART ---
+        const xScale = d3.scaleLinear().domain([0, maxVal]).range([0, midX - leftXBoundary]);
+
+        // State Title
+        svg.append("text").attr("x", midX).attr("y", startY - 18).attr("text-anchor", "middle")
+            .style("fill", "rgba(160,205,240,0.7)").style("font-size", "16px").style("font-weight", "800")
+            .text(selectedState === "Australia" ? "National" : `${selectedState}`);
+
+        data.forEach((d, i) => {
+            const yPos = startY + i * (barH + gap);
+            const mPct = (d.Male / d.total * 100).toFixed(0);
+            const fPct = (d.Female / d.total * 100).toFixed(0);
+
+            const longName = Object.keys(nameMap).find(key => nameMap[key] === d.roadUser) || d.roadUser;
+            const handleRowClick = () => {
+                currentHighlight = currentHighlight === longName ? null : longName;
+                updateAllCharts();
+            };
+            const isMuted = currentHighlight && currentHighlight !== longName;
+
+            // Male Bar (Horizontal Left)
+            svg.append("rect")
+                .attr("x", midX - 2).attr("y", yPos)
+                .attr("width", 0).attr("height", barH).attr("rx", 4)
+                .attr("fill", "#38bdf8")
+                .attr("opacity", isMuted ? 0.2 : 0.9)
+                .attr("cursor", "pointer")
+                .on("mouseover", (e) => showTip(e, `<b>${displayRoadUser(d.roadUser)} · Male</b><br>${formatNumber(d.Male)} · ${mPct}%`))
+                .on("mousemove", (e) => showTip(e, `<b>${displayRoadUser(d.roadUser)} · Male</b><br>${formatNumber(d.Male)} · ${mPct}%`))
+                .on("mouseout", hideTip)
+                .on("click", handleRowClick)
+                .transition().duration(600).delay(i * 70)
+                .attr("x", midX - 2 - xScale(d.Male))
+                .attr("width", xScale(d.Male));
+
+            // Male Text
+            svg.append("text")
+                .attr("x", midX - 6 - xScale(d.Male)).attr("y", yPos + barH / 2)
+                .attr("dy", "0.35em").attr("text-anchor", "end")
+                .style("fill", "#7dd3fc").style("font-size", "10px").style("font-weight", "800")
+                .attr("opacity", isMuted ? 0.3 : 1)
+                .text(formatNumber(d.Male));
+
+            // Female Bar (Horizontal Right)
+            svg.append("rect")
+                .attr("x", midX + 2).attr("y", yPos)
+                .attr("width", 0).attr("height", barH).attr("rx", 4)
+                .attr("fill", "#f472b6")
+                .attr("opacity", isMuted ? 0.2 : 0.9)
+                .attr("cursor", "pointer")
+                .on("mouseover", (e) => showTip(e, `<b>${displayRoadUser(d.roadUser)} · Female</b><br>${formatNumber(d.Female)} · ${fPct}%`))
+                .on("mousemove", (e) => showTip(e, `<b>${displayRoadUser(d.roadUser)} · Female</b><br>${formatNumber(d.Female)} · ${fPct}%`))
+                .on("mouseout", hideTip)
+                .on("click", handleRowClick)
+                .transition().duration(600).delay(i * 70)
+                .attr("width", xScale(d.Female));
+
+            // Female Text
+            svg.append("text")
+                .attr("x", midX + 6 + xScale(d.Female)).attr("y", yPos + barH / 2)
+                .attr("dy", "0.35em").attr("text-anchor", "start")
+                .style("fill", "#f9a8d4").style("font-size", "10px").style("font-weight", "800")
+                .attr("opacity", isMuted ? 0.3 : 1)
+                .text(formatNumber(d.Female));
+
+            // Category Label
+            svg.append("text")
+                .attr("x", midX).attr("y", yPos + barH / 2)
+                .attr("dy", "0.35em").attr("text-anchor", "middle")
+                .style("fill", "#e0f7ff").style("font-size", "10px").style("font-weight", "900")
+                .style("text-shadow", "0 0 8px rgba(6,18,38,1)")
+                .attr("cursor", "pointer")
+                .attr("opacity", isMuted ? 0.3 : 1)
+                .on("click", handleRowClick)
+                .text(displayRoadUser(d.roadUser));
+        });
+        
+
+    } else {
+        // --- MODE B: SINGLE-GENDER VERTICAL BAR CHART ---
+        const activeSex = showMale ? "Male" : "Female";
+        const barColor = showMale ? "#38bdf8" : "#f472b6";
+        const textColor = showMale ? "#7dd3fc" : "#f9a8d4";
+
+        const xBand = d3.scaleBand()
+            .domain(data.map(d => d.roadUser))
+            .range([leftXBoundary, rightXBoundary])
+            .padding(0.32);
+
+        const yLinear = d3.scaleLinear()
+            .domain([0, maxVal])
+            .range([baselineY, topY]);
+
+        // State Title
+        svg.append("text").attr("x", midX).attr("y", startY - 18).attr("text-anchor", "middle")
+            .style("fill", "rgba(160,205,240,0.7)").style("font-size", "16px").style("font-weight", "800")
+            .text(selectedState === "Australia" ? `National (${activeSex}s)` : `${selectedState} (${activeSex}s)`);
+
+        data.forEach((d, i) => {
+            const val = d[activeSex];
+            const barW = xBand.bandwidth();
+            const calculatedBarH = baselineY - yLinear(val);
+            const xPos = xBand(d.roadUser);
+            const yPos = yLinear(val);
+            const pct = (val / d.total * 100).toFixed(0);
+
+            const longName = Object.keys(nameMap).find(key => nameMap[key] === d.roadUser) || d.roadUser;
+            const handleRowClick = () => {
+                currentHighlight = currentHighlight === longName ? null : longName;
+                updateAllCharts();
+            };
+            const isMuted = currentHighlight && currentHighlight !== longName;
+
+            // Vertical Bar
+            svg.append("rect")
+                .attr("x", xPos)
+                .attr("y", baselineY)
+                .attr("width", barW)
+                .attr("height", 0)
+                .attr("rx", 4)
+                .attr("fill", barColor)
+                .attr("opacity", isMuted ? 0.2 : 0.9)
+                .attr("cursor", "pointer")
+                .on("mouseover", (e) => showTip(e, `<b>${displayRoadUser(d.roadUser)} · ${activeSex}</b><br>${formatNumber(val)} · ${pct}%`))
+                .on("mousemove", (e) => showTip(e, `<b>${displayRoadUser(d.roadUser)} · ${activeSex}</b><br>${formatNumber(val)} · ${pct}%`))
+                .on("mouseout", hideTip)
+                .on("click", handleRowClick)
+                .transition().duration(600).delay(i * 70)
+                .attr("y", yPos)
+                .attr("height", Math.max(0, calculatedBarH));
+
+            // Vertical Value Text (Centered Over Bar)
+            svg.append("text")
+                .attr("x", xPos + barW / 2)
+                .attr("y", yPos - 6)
+                .attr("text-anchor", "middle")
+                .style("fill", textColor).style("font-size", "10px").style("font-weight", "800")
+                .attr("opacity", isMuted ? 0.3 : 1)
+                .text(formatNumber(val));
+
+            // Category Label (Centered Under Axis Baseline)
+            svg.append("text")
+                .attr("x", xPos + barW / 2)
+                .attr("y", baselineY + 16)
+                .attr("text-anchor", "middle")
+                .style("fill", "#e0f7ff").style("font-size", "10px").style("font-weight", "900")
+                .style("text-shadow", "0 0 8px rgba(6,18,38,1)")
+                .attr("cursor", "pointer")
+                .attr("opacity", isMuted ? 0.3 : 1)
+                .on("click", handleRowClick)
+                .text(displayRoadUser(d.roadUser));
+        });
+
+        // Add a clean baseline reference stroke
+        svg.append("line")
+            .attr("x1", leftXBoundary - 10)
+            .attr("y1", baselineY)
+            .attr("x2", rightXBoundary + 10)
+            .attr("y2", baselineY)
+            .attr("stroke", "rgba(34, 211, 238, 0.2)")
+            .attr("stroke-width", 1);
     }
 
-    .filter-bar {
-        margin-inline: 0.75rem;
-    }
+    // =========================================================================
+    // UNIFIED INTERACTIVE BOTTOM LEGEND RENDERING (For populated view states)
+    // =========================================================================
+    svg.append("text")
+        .attr("x", midX)
+        .attr("y", titleY)
+        .attr("text-anchor", "middle")
+        .style("fill", "#e0f7ff")
+        .style("font-size", "14px")
+        .style("font-weight", "900")
+        .style("letter-spacing", "0.06em")
+        .text("Gender Filter");
 
-    .kpi-card,
-    .filter-bar {
-        border-radius: 20px;
-    }
+    [{ label: "Male", col: "#38bdf8", x: midX - 55 }, { label: "Female", col: "#f472b6", x: midX + 15 }].forEach(l => {
+        const isSexHidden = window.hiddenSex.has(l.label);
 
-    :root {
-        --cube-size: min(42vh, 40vw, 540px);
-        --cube-perspective: 1200px;
-    }
+        const legItem = svg.append("g")
+            .attr("class", "chart-click")
+            .attr("cursor", "pointer")
+            .attr("opacity", isSexHidden ? 0.3 : 1)
+            .on("click", () => {
+                if (isSexHidden) window.hiddenSex.delete(l.label);
+                else window.hiddenSex.add(l.label);
+                drawChoroplethChart();
+            });
 
-    .cube-stage {
-        padding: 0.75rem;
-    }
+        legItem.append("rect").attr("x", l.x).attr("y", legendY).attr("width", 11).attr("height", 11).attr("rx", 3).attr("fill", l.col);
 
-    .cube-chamber {
-        padding: 1.3rem;
-    }
-
-    .cube-face {
-        padding: 0.7rem 0.7rem 0.5rem;
-        border-radius: 16px;
-    }
-
-    .face-header h3 {
-        font-size: 0.92rem;
-    }
-
-    .face-kicker {
-        font-size: 0.58rem;
-    }
-
-    .face-pill {
-        font-size: 0.58rem;
-        padding: 0.28rem 0.48rem;
-    }
-
-    .face-note {
-        font-size: 0.64rem;
-    }
-
-    .dashboard-footer {
-        padding: 1rem;
-    }
+        legItem.append("text").attr("x", l.x + 16).attr("y", legendY + 10)
+            .style("fill", "#d6f0ff").style("font-size", "11px").style("font-weight", "800")
+            .style("text-decoration", isSexHidden ? "line-through" : "none")
+            .text(l.label);
+    });
 }
 
-@media (max-width: 380px) {
-    :root {
-        --cube-size: min(270px, calc(100vw - 44px));
-    }
+// ============================================================
+// ===================== CUBE CONTROLLER ======================
+// ============================================================
+function initCube() {
+    cubeEl = document.getElementById("cube");
+    viewportEl = document.getElementById("cube-viewport");
+    if (!cubeEl || !viewportEl) return;
 
-    .cube-face {
-        padding: 0.5rem;
-    }
+    applyTransform();
+    setActiveButton("front");
+
+    viewportEl.addEventListener("pointerdown", onPointerDown);
+    viewportEl.addEventListener("touchstart", onTouchStart, { passive: false });
+    viewportEl.addEventListener("mouseenter", () => pauseAutoRotate());
+    viewportEl.addEventListener("mouseleave", () => scheduleResume());
+
+    document.querySelectorAll(".face-btn[data-face]").forEach(btn => {
+        btn.addEventListener("click", () => snapToFace(btn.dataset.face));
+    });
+
+    const toggle = document.getElementById("auto-toggle");
+    const toggleLabel = document.getElementById("auto-toggle-label");
+    toggle.addEventListener("click", () => {
+        autoRotateEnabled = !autoRotateEnabled;
+        toggle.setAttribute("aria-pressed", String(autoRotateEnabled));
+        toggleLabel.textContent = autoRotateEnabled ? "⏸ Pause spin" : "▶ Resume spin";
+        if (autoRotateEnabled) startAutoRotate(); else stopAutoRotate();
+    });
+
+    document.addEventListener("keydown", e => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "SELECT") return;
+        if (e.key === "ArrowLeft") { pauseAutoRotate(); rotY -= 12; applyTransform(); scheduleResume(); }
+        if (e.key === "ArrowRight") { pauseAutoRotate(); rotY += 12; applyTransform(); scheduleResume(); }
+        if (e.key === "ArrowUp") { pauseAutoRotate(); rotX = Math.max(-MAX_TILT, rotX - 6); applyTransform(); scheduleResume(); }
+        if (e.key === "ArrowDown") { pauseAutoRotate(); rotX = Math.min(MAX_TILT, rotX + 6); applyTransform(); scheduleResume(); }
+        const km = { "1": "front", "2": "right", "3": "back", "4": "left" };
+        if (km[e.key]) snapToFace(km[e.key]);
+    });
+
+    startAutoRotate();
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .cube {
-        transition: none !important;
-    }
-
-    .hint-dot {
-        animation: none;
-    }
+function applyTransform() {
+    if (cubeEl) cubeEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
 }
+
+function onPointerDown(e) {
+    if (e.target.closest(".face-btn") || e.target.closest(".chart-click")) return;
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY);
+    document.addEventListener("pointermove", onPointerMove);
+    document.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointercancel", onPointerUp);
+}
+function onPointerMove(e) { if (isDragging && pointerStart) updateDrag(e.clientX, e.clientY); }
+function onPointerUp() {
+    if (!isDragging) return;
+    endDrag();
+    document.removeEventListener("pointermove", onPointerMove);
+    document.removeEventListener("pointerup", onPointerUp);
+    document.removeEventListener("pointercancel", onPointerUp);
+}
+
+function onTouchStart(e) {
+    if (e.target.closest(".face-btn") || e.touches.length !== 1) return;
+    e.preventDefault();
+    startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    document.addEventListener("touchmove", onTouchMove, { passive: false });
+    document.addEventListener("touchend", onTouchEnd);
+    document.addEventListener("touchcancel", onTouchEnd);
+}
+function onTouchMove(e) {
+    if (!isDragging || !pointerStart || e.touches.length !== 1) return;
+    e.preventDefault();
+    updateDrag(e.touches[0].clientX, e.touches[0].clientY);
+}
+function onTouchEnd() {
+    if (!isDragging) return;
+    endDrag();
+    document.removeEventListener("touchmove", onTouchMove);
+    document.removeEventListener("touchend", onTouchEnd);
+    document.removeEventListener("touchcancel", onTouchEnd);
+}
+
+function startDrag(x, y) {
+    isDragging = true;
+    pointerStart = { x, y, rotX, rotY };
+    viewportEl.classList.add("is-dragging");
+    cubeEl.classList.add("no-transition");
+    pauseAutoRotate();
+    hideTip();
+}
+function updateDrag(x, y) {
+    const dx = x - pointerStart.x, dy = y - pointerStart.y;
+    rotY = pointerStart.rotY + dx * DRAG_SENSITIVITY;
+    // Vertical tilt is gentler and hard-clamped so the cube never flips or shows its underside
+    rotX = pointerStart.rotX - dy * DRAG_SENSITIVITY * 0.4;
+    rotX = Math.max(-MAX_TILT, Math.min(MAX_TILT, rotX));
+    applyTransform();
+}
+function endDrag() {
+    isDragging = false;
+    pointerStart = null;
+    viewportEl.classList.remove("is-dragging");
+    cubeEl.classList.remove("no-transition");
+    updateActiveFaceFromRotation();
+    scheduleResume();
+}
+
+function snapToFace(face) {
+    if (!FACE_ROTATIONS[face]) return;
+    pauseAutoRotate();
+    viewportEl.classList.add("is-snapping");
+    cubeEl.classList.remove("no-transition");
+    rotY = shortestEquivalent(rotY, FACE_ROTATIONS[face].y);
+    rotX = DEFAULT_TILT;
+    applyTransform();
+    activeFace = face;
+    setActiveButton(face);
+    setTimeout(() => { viewportEl.classList.remove("is-snapping"); scheduleResume(); }, 760);
+}
+
+function shortestEquivalent(current, target) {
+    const diff = ((target - current + 540) % 360) - 180;
+    return current + diff;
+}
+
+function setActiveButton(face) {
+    document.querySelectorAll(".face-btn[data-face]").forEach(btn => {
+        const on = btn.dataset.face === face;
+        btn.classList.toggle("active", on);
+        btn.setAttribute("aria-selected", String(on));
+    });
+    document.querySelectorAll(".cube-face").forEach(el => el.classList.toggle("is-active", el.dataset.face === face));
+    const label = document.getElementById("active-face-label");
+    if (label) label.textContent = FACE_LABELS[face] || "—";
+}
+
+function updateActiveFaceFromRotation() {
+    const ny = ((rotY % 360) + 360) % 360;
+    let best = null, bestDist = Infinity;
+    Object.entries(FACE_ROTATIONS).forEach(([name, r]) => {
+        const ty = ((r.y % 360) + 360) % 360;
+        const d = Math.min(Math.abs(ny - ty), 360 - Math.abs(ny - ty));
+        if (d < bestDist) { bestDist = d; best = name; }
+    });
+    if (best) { activeFace = best; setActiveButton(best); }
+}
+
+function startAutoRotate() {
+    if (!autoRotateEnabled) return;
+    stopAutoRotate();
+    lastFrameTime = performance.now();
+    const tick = (now) => {
+        if (!autoRotateEnabled || isDragging) { rafId = null; return; }
+        const dt = now - lastFrameTime; lastFrameTime = now;
+        rotY += AUTO_ROTATE_SPEED * dt;
+        rotX += (DEFAULT_TILT - rotX) * 0.03; // gently self-correct tilt toward default
+        applyTransform();
+        rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+}
+function stopAutoRotate() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
+function pauseAutoRotate() { stopAutoRotate(); if (idleResumeTimer) { clearTimeout(idleResumeTimer); idleResumeTimer = null; } }
+function scheduleResume() {
+    if (idleResumeTimer) clearTimeout(idleResumeTimer);
+    if (!autoRotateEnabled) return;
+    idleResumeTimer = setTimeout(() => {
+        if (!isDragging && autoRotateEnabled) { cubeEl.classList.add("no-transition"); startAutoRotate(); }
+    }, IDLE_RESUME_MS);
+}
+
+// ======================== MASTER UPDATE ========================
+function updateAllCharts() {
+    updateStaticLabels();
+    updateKpis();
+    drawStreamChart();
+    drawParliamentChart();
+    drawWaffleChart();
+    drawChoroplethChart();
+}
+
+loadData();
