@@ -86,7 +86,7 @@ st.markdown(
             <strong style="color:#aef0ff;">Team</strong> &middot; DV14T07<br>
             <strong style="color:#aef0ff;">Tutor</strong> &middot; Raihaneh Aghaie<br>
             <strong style="color:#aef0ff;">Contributors</strong> &middot; Khang Huynh (Lio), Viet Nguyen (David)<br>
-            <strong style="color:#aef0ff;">Submission Date</strong> &middot; 12th June 2026
+            # <strong style="color:#aef0ff;">Submission Date</strong> &middot; 12th June 2026
         </p>
 
         <p style="margin:1.5rem 0 .4rem; color:#67e8f9; font-weight:800; letter-spacing:.08em;
