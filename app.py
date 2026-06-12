@@ -58,5 +58,8 @@ def get_html():
     return html
 
 
-# 3. Render the full dashboard. scrolling=True so nothing gets clipped.
-components.html(get_html(), height=1250, scrolling=True)
+# 3. Render the full dashboard.
+# scrolling=False => the iframe has NO inner scrollbar, so only the page scrolls (one scrollbar).
+# height must be tall enough to show the whole dashboard; any extra just shows more of the
+# starfield background, so err on the generous side rather than clipping the footer.
+components.html(get_html(), height=1250, scrolling=False)
